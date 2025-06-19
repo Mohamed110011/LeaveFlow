@@ -17,7 +17,7 @@ function Header({ setAuth, userRole }) {
       localStorage.removeItem("token");
       setAuth(false, null);
       toast.success("Logout successfully");
-      navigate("/login");
+      navigate("/landing");
     } catch (err) {
       console.error(err.message);
       toast.error("Failed to logout");

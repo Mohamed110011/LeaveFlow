@@ -249,8 +249,8 @@ const Register = ({ setAuth }) => {
                     </button>
                 </form>
 
-                <Link to="/" style={{ marginTop: '20px', display: 'inline-block' }}>Login</Link>
-                
+                <Link to="/" style={{ marginTop: '20px' , marginLeft: '130px', display: 'inline-block' }}>Login</Link>
+
                 <div className="google-login-container" style={{ marginTop: '20px', textAlign: 'center' }}>
                     <p style={{ marginBottom: '10px' }}>Ou inscrivez-vous avec :</p>
                     <GoogleLogin
