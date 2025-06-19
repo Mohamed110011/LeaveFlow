@@ -1,0 +1,130 @@
+/* LeaveFlow - Leave and Absence Management Application */
+
+/* Main header */
+.app-header {
+  background: #FFFFFF;
+  box-shadow: 0 4px 15px rgba(108, 99, 255, 0.1);
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 30px;
+  width: 100%;
+  border-bottom: 1px solid #E1E5EE;
+}
+
+/* Logo and title */
+.header-brand {
+  display: flex;
+  align-items: center;
+}
+
+.brand-logo {
+  font-size: 24px;
+  color: #6C63FF;
+  margin-right: 12px;
+}
+
+.brand-title {
+  font-size: 22px;
+  font-weight: 600;
+  color: #2A2D3E;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+.brand-title span {
+  color: #6C63FF;
+  font-weight: 700;
+}
+
+/* User role display */
+.user-role {
+  background-color: #F3F4F9;
+  color: #6C63FF;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 5px 12px;
+  border-radius: 20px;
+  margin-left: 15px;
+  text-transform: capitalize;
+  border: 1px solid #8F88FF;
+}
+
+/* Logout button */
+.logout-button {
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg, #FF6B6B 0%, #E34965 100%);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 50px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+}
+
+.logout-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+}
+
+.logout-icon {
+  margin-right: 8px;
+  font-size: 16px;
+}
+
+/* Main layout */
+.app-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: #F3F4F9;
+}
+
+.sidebar-wrapper {
+  width: 260px;
+  flex-shrink: 0;
+}
+
+.app-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-main {
+  flex: 1;
+  padding: 30px;
+  overflow-y: auto;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .sidebar-wrapper {
+    width: 80px;
+  }
+  
+  .brand-title {
+    display: none;
+  }
+}
+
+@media (max-width: 576px) {
+  .sidebar-wrapper {
+    width: 0;
+  }
+  
+  .logout-button span {
+    display: none;
+  }
+  
+  .logout-button {
+    padding: 10px;
+  }
+  
+  .logout-icon {
+    margin-right: 0;
+  }
+}

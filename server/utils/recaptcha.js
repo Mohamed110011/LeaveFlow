@@ -1,0 +1,59 @@
+const axios = require('axios');
+
+const verifyRecaptcha = async (token) => {
+  try {
+    console.log('Début de la vérification reCAPTCHA');
+    
+    if (!token) {
+      console.error('Pas de token reCAPTCHA fourni');
+      return false;
+    }
+
+    const secretKey = process.env.RECAPTCHA_SECRET_KEY;
+    console.log('Secret key configured:', !!secretKey);
+    
+    if (!secretKey) {
+      console.error('RECAPTCHA_SECRET_KEY non définie dans les variables d\'environnement');
+      throw new Error('reCAPTCHA secret key not configured');
+    }
+
+    // Log les premiers caractères de la clé secrète pour debug (sécurité)
+    console.log('Secret key starts with:', secretKey.substring(0, 6) + '...');
+    console.log('Token starts with:', token.substring(0, 20) + '...');
+
+    const verifyURL = 'https://www.google.com/recaptcha/api/siteverify';
+    
+    // Utilisation de URLSearchParams pour formater les données
+    const params = new URLSearchParams();
+    params.append('secret', secretKey);
+    params.append('response', token);
+
+    const response = await axios.post(verifyURL, params, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    });
+
+    console.log('Réponse complète de Google:', JSON.stringify(response.data, null, 2));
+
+    if (response.data.success) {
+      console.log('Vérification reCAPTCHA réussie');
+      return true;
+    } else {
+      console.error('Échec de la vérification reCAPTCHA');
+      if (response.data['error-codes']) {
+        console.error('Codes d\'erreur:', response.data['error-codes']);
+      }
+      return false;
+    }
+  } catch (error) {
+    console.error('Erreur lors de la vérification reCAPTCHA:', error.message);
+    if (error.response) {
+      console.error('Données de la réponse:', error.response.data);
+      console.error('Statut de la réponse:', error.response.status);
+    }
+    throw error;
+  }
+};
+
+module.exports = { verifyRecaptcha };
