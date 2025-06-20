@@ -1,0 +1,240 @@
+{
+  "landing": {
+    "navigation": {
+      "features": "Fonctionnalités",
+      "howItWorks": "Comment ça marche",
+      "pricing": "Tarifs",
+      "contact": "Contact"
+    },
+    "hero": {
+      "title": "Simplifiez la gestion des congés",
+      "subtitle": "Optimisez les demandes de congés, les approbations et le suivi avec notre plateforme intuitive.",
+      "startTrial": "Essai gratuit"
+    },
+    "features": {
+      "title": "Pourquoi choisir LeaveFlow ?",
+      "cards": {
+        "planning": {
+          "title": "Planification facile",
+          "description": "Demandez et gérez les congés en quelques clics"
+        },
+        "tracking": {
+          "title": "Suivi en temps réel",
+          "description": "Surveillez les soldes de congés et les statuts instantanément"
+        },
+        "notifications": {
+          "title": "Notifications intelligentes",
+          "description": "Alertes automatiques pour les demandes et approbations"
+        }
+      }
+    },
+    "dashboard": {
+      "title": "Tableau de bord puissant",
+      "subtitle": "Obtenez une vue d'ensemble claire des congés de votre équipe",
+      "features": {
+        "calendarView": "Vue calendrier",
+        "leaveBalance": "Suivi des soldes de congés",
+        "teamAvailability": "Disponibilité de l'équipe",
+        "customReports": "Rapports personnalisés"
+      }
+    },
+    "contact": {
+      "title": "Contactez-nous",
+      "subtitle": "Des questions ? Nous sommes là pour vous aider",
+      "form": {
+        "name": "Nom",
+        "email": "Email",
+        "message": "Message",
+        "send": "Envoyer le message"
+      },
+      "info": {
+        "phone": "Téléphone",
+        "email": "Email",
+        "address": "Adresse"
+      }
+    },
+    "footer": {
+      "about": {
+        "title": "LeaveFlow",
+        "description": "Simplifier et optimiser la gestion des congés pour les organisations du monde entier."
+      },
+      "sections": {
+        "product": {
+          "title": "Produit",
+          "links": {
+            "features": "Fonctionnalités",
+            "pricing": "Tarifs",
+            "howItWorks": "Comment ça marche"
+          }
+        },
+        "company": {
+          "title": "Entreprise",
+          "links": {
+            "about": "À propos",
+            "contact": "Contact",
+            "blog": "Blog"
+          }
+        }
+      },
+      "social": {
+        "title": "Suivez-nous",
+        "linkedin": "LinkedIn",
+        "twitter": "Twitter",
+        "facebook": "Facebook"
+      },
+      "copyright": "© 2024 LeaveFlow. Tous droits réservés."
+    },
+    "pricing": {
+      "title": "Prix simples et transparents",
+      "plans": {
+        "starter": {
+          "title": "Débutant",
+          "price": "5€",
+          "period": "/utilisateur/mois",
+          "features": [
+            "Jusqu'à 10 utilisateurs",
+            "Types de congés basiques",
+            "Notifications par email",
+            "Rapports basiques"
+          ]
+        },
+        "professional": {
+          "title": "Professionnel",
+          "price": "10€",
+          "period": "/utilisateur/mois",
+          "features": [
+            "Utilisateurs illimités",
+            "Types de congés personnalisés",
+            "Notifications avancées",
+            "Rapports avancés"
+          ]
+        },
+        "enterprise": {
+          "title": "Entreprise",
+          "price": "Nous contacter",
+          "features": [
+            "Solutions personnalisées",
+            "Accès API",
+            "Support dédié",
+            "Intégrations personnalisées"
+          ]
+        }
+      }
+    },
+    "cta": {
+      "getStarted": "Commencer",
+      "contactSales": "Contacter les ventes"
+    }
+  },
+  "general": {
+    "buttons": {
+      "login": "Connexion",
+      "signup": "S'inscrire",
+      "submit": "Soumettre",
+      "cancel": "Annuler",
+      "save": "Enregistrer",
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "back": "Retour",
+      "next": "Suivant"
+    },
+    "navigation": {
+      "home": "Accueil",
+      "dashboard": "Tableau de bord",
+      "profile": "Profil",
+      "settings": "Paramètres",
+      "help": "Aide",
+      "logout": "Déconnexion"
+    },
+    "labels": {
+      "email": "Email",
+      "password": "Mot de passe",
+      "name": "Nom",
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "phone": "Téléphone",
+      "address": "Adresse",
+      "country": "Pays",
+      "city": "Ville",
+      "zipCode": "Code postal"
+    },
+    "messages": {
+      "welcome": "Bienvenue",
+      "loading": "Chargement...",
+      "error": "Une erreur est survenue",
+      "success": "Opération réussie",
+      "confirmDelete": "Êtes-vous sûr de vouloir supprimer ceci ?",
+      "noData": "Aucune donnée disponible",
+      "required": "Ce champ est obligatoire"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Connexion",
+      "rememberMe": "Se souvenir de moi",
+      "forgotPassword": "Mot de passe oublié ?",
+      "noAccount": "Vous n'avez pas de compte ?",
+      "signupLink": "Inscrivez-vous ici"
+    },
+    "register": {
+      "title": "Créer un compte",
+      "hasAccount": "Vous avez déjà un compte ?",
+      "loginLink": "Connectez-vous ici",
+      "terms": "J'accepte les conditions d'utilisation"
+    },
+    "forgotPassword": {
+      "title": "Réinitialiser le mot de passe",
+      "instruction": "Entrez votre adresse email et nous vous enverrons un lien pour réinitialiser votre mot de passe",
+      "success": "Si un compte existe pour cet email, vous recevrez un lien de réinitialisation"
+    }
+  },
+  "dashboard": {
+    "welcome": "Bon retour",
+    "stats": {
+      "totalLeaves": "Total des congés",
+      "pending": "En attente",
+      "approved": "Approuvés",
+      "rejected": "Refusés"
+    },
+    "quickActions": {
+      "newRequest": "Nouvelle demande",
+      "viewCalendar": "Voir le calendrier",
+      "viewTeam": "Voir l'équipe",
+      "reports": "Générer des rapports"
+    }
+  },
+  "leaveRequest": {
+    "new": {
+      "title": "Nouvelle demande de congé",
+      "startDate": "Date de début",
+      "endDate": "Date de fin",
+      "type": "Type de congé",
+      "reason": "Motif",
+      "attachments": "Pièces jointes",
+      "submit": "Soumettre la demande"
+    },
+    "types": {
+      "annual": "Congé annuel",
+      "sick": "Congé maladie",
+      "personal": "Congé personnel",
+      "other": "Autre"
+    },
+    "status": {
+      "pending": "En attente",
+      "approved": "Approuvé",
+      "rejected": "Refusé",
+      "cancelled": "Annulé"
+    }
+  },
+  "errors": {
+    "required": "Ce champ est obligatoire",
+    "invalidEmail": "Adresse email invalide",
+    "invalidPassword": "Le mot de passe doit contenir au moins 8 caractères",
+    "passwordMismatch": "Les mots de passe ne correspondent pas",
+    "invalidDate": "Date invalide",
+    "dateRange": "La date de fin doit être postérieure à la date de début",
+    "maxLength": "Texte trop long",
+    "fileSize": "Fichier trop volumineux",
+    "fileType": "Type de fichier invalide"
+  }
+}
