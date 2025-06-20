@@ -60,12 +60,11 @@ const Landing = () => {
           <button className="theme-toggle" onClick={toggleTheme}>
             {theme === 'light' ? <FaMoon /> : <FaSun />}
           </button>
-          <LanguageSelector />
-          <button className="btn btn-outline" onClick={() => window.location.href='/login'}>
-            {t('login')}
+          <LanguageSelector />          <button className="btn btn-outline" onClick={() => window.location.href='/login'}>
+            {t('landing.navigation.login')}
           </button>
           <button className="btn btn-primary" onClick={() => window.location.href='/register'}>
-            {t('register')}
+            {t('landing.navigation.register')}
           </button>
         </div>
       </nav>

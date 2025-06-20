@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { FaPaperPlane, FaRobot } from 'react-icons/fa';
 import { MdClose } from 'react-icons/md';
@@ -6,11 +7,22 @@ import config from '../../config';
 import './Chatbot.css';
 
 const Chatbot = () => {
+    const { t } = useTranslation();
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
-    const [isOpen, setIsOpen] = useState(false);    const [isLoading, setIsLoading] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const chatContainerRef = useRef(null);
     const API_KEY = config.GEMINI_API_KEY;
+
+    useEffect(() => {
+        if (isOpen && messages.length === 0) {
+            setMessages([{ 
+                text: t('chatbot.welcomeMessage'),
+                sender: 'bot'
+            }]);
+        }
+    }, [isOpen, t]);
     
     // Configuration explicite de l'API avec la version v1
     const genAI = new GoogleGenerativeAI(API_KEY, {
@@ -56,22 +68,21 @@ const Chatbot = () => {
             setMessages(prev => [...prev, { text: botMessage, sender: 'bot' }]);        } catch (error) {
             console.error('Error generating response:', error);
             
-            // Message d'erreur plus détaillé pour les développeurs dans la console
             if (error.message.includes('API_KEY_INVALID')) {
                 console.error('The Gemini API key is invalid. Please check your API key in the .env file.');
                 setMessages(prev => [...prev, { 
-                    text: "Je ne peux pas répondre pour le moment. Il semble y avoir un problème avec la configuration de l'API Gemini. Veuillez contacter l'administrateur du système.", 
+                    text: t('chatbot.errorMessages.apiError'),
                     sender: 'bot' 
                 }]);
             } else if (error.message.includes('not found for API version') || error.message.includes('not supported for generateContent')) {
                 console.error('Model not available. Check the model name in the Chatbot component.');
                 setMessages(prev => [...prev, { 
-                    text: "Je ne peux pas répondre pour le moment. Il semble y avoir un problème avec le modèle IA utilisé. Veuillez contacter l'administrateur du système.", 
+                    text: t('chatbot.errorMessages.apiError'),
                     sender: 'bot' 
                 }]);
             } else {
                 setMessages(prev => [...prev, { 
-                    text: "Désolé, je n'ai pas pu générer une réponse. Veuillez réessayer plus tard.", 
+                    text: t('chatbot.errorMessages.networkError'),
                     sender: 'bot' 
                 }]);
             }
@@ -82,53 +93,57 @@ const Chatbot = () => {
 
     const toggleChat = () => {
         setIsOpen(!isOpen);
-    };
-
-    return (
+    };    return (
         <div className="chatbot-container">
             {!isOpen ? (
                 <button className="chat-toggle-button" onClick={toggleChat}>
-                    <FaRobot /> Chat Assistant
+                    <FaRobot /> {t('chatbot.toggleButton')}
                 </button>
             ) : (
                 <div className="chat-window">
                     <div className="chat-header">
-                        <span><FaRobot /> LeaveFlow Assistant</span>
+                        <span><FaRobot /> {t('chatbot.title')}</span>
                         <button onClick={toggleChat} className="close-button">
                             <MdClose />
                         </button>
                     </div>
                     <div className="chat-messages" ref={chatContainerRef}>
                         {messages.map((message, index) => (
-                            <div
-                                key={index}
-                                className={`message ${message.sender === 'user' ? 'user-message' : 'bot-message'}`}
-                            >
+                            <div key={index} className={`message ${message.sender}-message`}>
                                 {message.text}
                             </div>
                         ))}
                         {isLoading && (
                             <div className="message bot-message">
-                                <div className="typing-indicator">
-                                    <span></span>
-                                    <span></span>
-                                    <span></span>
+                                <div className="loading-dots">
+                                    <div className="dot"></div>
+                                    <div className="dot"></div>
+                                    <div className="dot"></div>
                                 </div>
+                                <span className="sr-only">{t('chatbot.loadingMessage')}</span>
                             </div>
                         )}
                     </div>
-                    <form onSubmit={handleSubmit} className="chat-input-form">
-                        <input
-                            type="text"
-                            value={input}
-                            onChange={(e) => setInput(e.target.value)}
-                            placeholder="Type your message..."
-                            disabled={isLoading}
-                        />
-                        <button type="submit" disabled={isLoading || !input.trim()}>
-                            <FaPaperPlane />
-                        </button>
-                    </form>
+                    <div className="chat-input-container">
+                        <form onSubmit={handleSubmit} className="chat-input-form">
+                            <input
+                                type="text"
+                                value={input}
+                                onChange={(e) => setInput(e.target.value)}
+                                placeholder={t('chatbot.inputPlaceholder')}
+                                disabled={isLoading}
+                                className="chat-input"
+                            />
+                            <button 
+                                type="submit" 
+                                disabled={isLoading}
+                                className="send-button"
+                                aria-label={t('chatbot.sendButton')}
+                            >
+                                <FaPaperPlane />
+                            </button>
+                        </form>
+                    </div>
                 </div>
             )}
         </div>

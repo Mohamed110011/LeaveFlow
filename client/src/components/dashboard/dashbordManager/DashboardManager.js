@@ -8,6 +8,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Pie } from 'react-chartjs-2';
+import Calendar from '../common/Calendar';
 import "./GererConges.css";
 
 // Enregistrer les composants Chart.js nécessaires
@@ -144,6 +145,12 @@ const DashboardManager = ({ setAuth }) => {
                 }}
               />
             </div>
+          </div>
+
+          {/* Calendrier des congés */}
+          <div className="calendar-section">
+            <h2>Calendrier des congés de l'équipe</h2>
+            <Calendar userRole="manager" />
           </div>
         </main>
       )}

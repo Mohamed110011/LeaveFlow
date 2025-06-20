@@ -14,6 +14,7 @@ import {
   Tooltip,
   Legend
 } from 'chart.js';
+import Calendar from '../common/Calendar';
 import './DashboardEmployee.css';
 
 ChartJS.register(
@@ -24,7 +25,9 @@ ChartJS.register(
 
 const DashboardEmployee = () => {
   const [loading, setLoading] = useState(true);
-  const [name, setName] = useState('');  const [leaveStats, setLeaveStats] = useState({
+  const [name, setName] = useState('');
+  const [userId, setUserId] = useState(null);
+  const [leaveStats, setLeaveStats] = useState({
     pendingRequests: 0,
     approvedRequests: 0,
     rejectedRequests: 0
@@ -44,6 +47,7 @@ const DashboardEmployee = () => {
       if (!profileRes.ok) throw new Error("Failed to fetch profile data");
       const profileData = await profileRes.json();
       setName(profileData.user_name);
+      setUserId(profileData.user_id);
 
       // Get leave requests
       const demandesRes = await fetch("http://localhost:5001/dashboard/demandes-conge", {
@@ -61,7 +65,7 @@ const DashboardEmployee = () => {
 
     } catch (err) {
       console.error(err.message);
-      toast.error("Failed to fetch dashboard data");
+      toast.error("Une erreur est survenue lors du chargement des données");
     } finally {
       setLoading(false);
     }
@@ -150,6 +154,11 @@ const DashboardEmployee = () => {
             <div className="chart-wrapper">
               <Pie data={chartData} options={chartOptions} />
             </div>
+          </div>
+
+          <div className="calendar-section">
+            <h2>Mon calendrier de congés</h2>
+            <Calendar userRole="employee" userId={userId} />
           </div>
         </main>
       )}

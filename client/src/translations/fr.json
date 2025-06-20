@@ -1,10 +1,24 @@
 {
+  "chatbot": {
+    "toggleButton": "Assistant",
+    "title": "Assistant LeaveFlow",
+    "inputPlaceholder": "Tapez votre message...",
+    "sendButton": "Envoyer",
+    "loadingMessage": "En train d'écrire...",
+    "welcomeMessage": "Bonjour ! Je suis là pour vous aider avec la gestion de vos congés. Comment puis-je vous assister ?",
+    "errorMessages": {
+      "apiError": "Désolé, je rencontre des difficultés techniques. Veuillez réessayer plus tard.",
+      "networkError": "Impossible de se connecter au service. Veuillez vérifier votre connexion."
+    }
+  },
   "landing": {
     "navigation": {
       "features": "Fonctionnalités",
       "howItWorks": "Comment ça marche",
       "pricing": "Tarifs",
-      "contact": "Contact"
+      "contact": "Contact",
+      "login": "Connexion",
+      "register": "S'inscrire"
     },
     "hero": {
       "title": "Simplifiez la gestion des congés",

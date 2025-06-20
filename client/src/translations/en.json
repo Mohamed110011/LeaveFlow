@@ -1,10 +1,24 @@
 {
+  "chatbot": {
+    "toggleButton": "Assistant",
+    "title": "LeaveFlow Assistant",
+    "inputPlaceholder": "Type your message...",
+    "sendButton": "Send",
+    "loadingMessage": "Typing...",
+    "welcomeMessage": "Hi! I'm here to help you manage your leaves. How can I assist you?",
+    "errorMessages": {
+      "apiError": "Sorry, I'm experiencing technical difficulties. Please try again later.",
+      "networkError": "Unable to connect to the service. Please check your connection."
+    }
+  },
   "landing": {
     "navigation": {
       "features": "Features",
       "howItWorks": "How it works",
       "pricing": "Pricing",
-      "contact": "Contact"
+      "contact": "Contact",
+      "login": "Login",
+      "register": "Register"
     },
     "hero": {
       "title": "Simplify Your Leave Management",

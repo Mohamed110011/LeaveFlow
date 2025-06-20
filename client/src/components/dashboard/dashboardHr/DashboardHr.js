@@ -11,6 +11,7 @@ import {
   faTimesCircle,
   faHourglassHalf
 } from "@fortawesome/free-solid-svg-icons";
+import Calendar from '../common/Calendar';
 
 // Status constants that match the backend
 const VALID_STATUSES = {
@@ -198,6 +199,12 @@ const DashboardHr = ({ setAuth }) => {
               </table>
             </div>
           </section>
+
+          {/* Calendrier des congés */}
+          <div className="calendar-section">
+            <h2>Calendrier des congés</h2>
+            <Calendar userRole="hr" />
+          </div>
         </main>
       )}
     </div>
