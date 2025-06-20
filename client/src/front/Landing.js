@@ -10,7 +10,6 @@ import {
   FaLinkedin,
   FaTwitter,
   FaFacebook,
-  FaInstagram,
   FaPhone,
   FaEnvelope,
   FaMapMarkerAlt
@@ -222,12 +221,11 @@ const Landing = () => {
               <li><a href="/blog">{t('landing.footer.sections.company.links.blog')}</a></li>
             </ul>
           </div>
-          <div className="footer__section">
-            <h4>{t('landing.footer.social.title')}</h4>
+          <div className="footer__section">            <h4>{t('landing.footer.social.title')}</h4>
             <div className="social-links">
-              <a href="#" title={t('landing.footer.social.linkedin')}><FaLinkedin /></a>
-              <a href="#" title={t('landing.footer.social.twitter')}><FaTwitter /></a>
-              <a href="#" title={t('landing.footer.social.facebook')}><FaFacebook /></a>
+              <a href="https://linkedin.com/company/leaveflow" target="_blank" rel="noopener noreferrer" title={t('landing.footer.social.linkedin')}><FaLinkedin /></a>
+              <a href="https://twitter.com/leaveflow" target="_blank" rel="noopener noreferrer" title={t('landing.footer.social.twitter')}><FaTwitter /></a>
+              <a href="https://facebook.com/leaveflow" target="_blank" rel="noopener noreferrer" title={t('landing.footer.social.facebook')}><FaFacebook /></a>
             </div>
           </div>
         </div>

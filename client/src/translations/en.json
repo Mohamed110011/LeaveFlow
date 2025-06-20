@@ -1,4 +1,79 @@
 {
+  "dashboard": {
+    "title": "Dashboard",
+    "stats": {
+      "remainingDays": "Remaining Days",
+      "daysAvailable": "days available",
+      "pendingRequests": "Pending Requests",
+      "awaitingApproval": "awaiting approval",
+      "teamAbsences": "Team Absences",
+      "peopleOff": "people off today"
+    },
+    "upcomingLeaves": {
+      "title": "Upcoming Leaves",
+      "noUpcoming": "No upcoming leaves"
+    },
+    "hr": {
+      "welcome": "Welcome",
+      "allDepartments": "All departments",
+      "leaveCalendar": "Leave Calendar"
+    }
+  },
+  "calendar": {
+    "title": "Leave Calendar",
+    "filters": {
+      "holidays": "Public Holidays",
+      "pendingLeaves": "Pending Leaves",
+      "approvedLeaves": "Approved Leaves",
+      "rejectedLeaves": "Rejected Leaves",
+      "showHolidays": "Show public holidays",
+      "showTeamLeaves": "Show team leaves",
+      "allDepartments": "All departments",
+      "selectDepartment": "Select department",
+      "selectEmployee": "Select employee"
+    },
+    "legend": {
+      "holiday": "Public Holiday",
+      "pendingLeave": "Pending",
+      "approvedLeave": "Approved",
+      "rejectedLeave": "Rejected",
+      "vacation": "Vacation",
+      "sickLeave": "Sick Leave",
+      "workFromHome": "Work From Home"
+    },
+    "views": {
+      "month": "Month",
+      "week": "Week",
+      "day": "Day",
+      "list": "List"
+    },
+    "buttons": {
+      "today": "Today",
+      "prev": "Previous",
+      "next": "Next"
+    },
+    "events": {
+      "holiday": "Public Holiday",
+      "vacation": "Vacation",
+      "sickLeave": "Sick Leave",
+      "workFromHome": "Work From Home"
+    },
+    "errors": {
+      "loadFailed": "Failed to load calendar",
+      "fetchDepartments": "Failed to fetch departments"
+    },
+    "modal": {
+      "addTitle": "Add Leave",
+      "editTitle": "Edit Leave",
+      "type": "Leave Type",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "description": "Description",
+      "save": "Save",
+      "cancel": "Cancel",
+      "delete": "Delete"
+    }
+  },
   "chatbot": {
     "toggleButton": "Assistant",
     "title": "LeaveFlow Assistant",

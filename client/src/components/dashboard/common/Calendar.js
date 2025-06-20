@@ -73,10 +73,43 @@ const joursFeries2025 = [
   }
 ];
 
+// Couleurs pour les employés
+const employeeColors = [
+  '#4CAF50', // Vert
+  '#2196F3', // Bleu
+  '#9C27B0', // Violet
+  '#FF9800', // Orange
+  '#00BCD4', // Cyan
+  '#FF5722', // Orange foncé
+  '#795548', // Marron
+  '#607D8B', // Bleu gris
+  '#E91E63', // Rose
+  '#673AB7'  // Violet foncé
+];
+
+// Fonction pour obtenir une couleur unique par employé
+const getEmployeeColor = (userId) => {
+  // Utiliser le modulo pour s'assurer que nous ne dépassons pas le tableau de couleurs
+  const colorIndex = Math.abs(hashCode(userId.toString())) % employeeColors.length;
+  return employeeColors[colorIndex];
+};
+
+// Fonction de hachage simple pour générer un index basé sur l'ID
+const hashCode = (str) => {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash;
+  }
+  return hash;
+};
+
 const Calendar = ({ userRole }) => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [employeeLegend, setEmployeeLegend] = useState(new Map());
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -99,6 +132,9 @@ const Calendar = ({ userRole }) => {
         if (!congeDemandes.ok) throw new Error("Erreur de récupération des congés");
         const demandesData = await congeDemandes.json();
 
+        // Pour stocker les couleurs des employés
+        const legendMap = new Map();
+
         // Filtrer les congés
         const filteredDemandes = demandesData.filter(demande => {
           const isMatch = userRole === 'employee' 
@@ -108,19 +144,38 @@ const Calendar = ({ userRole }) => {
         });
 
         // Créer les événements de congés
-        const congesEvents = filteredDemandes.map(demande => ({
-          title: userRole === 'employee' 
-            ? `Congé: ${demande.type_conge || 'Type ' + demande.type_conge_id}` 
-            : `${demande.user_name || 'Employé'} - Type ${demande.type_conge_id}`,
-          start: new Date(demande.date_debut).toISOString().split('T')[0],
-          end: new Date(demande.date_fin).toISOString().split('T')[0],
-          backgroundColor: '#4CAF50',
-          className: 'conge-event',
-          extendedProps: {
-            description: demande.raison || '',
-            type: 'conge'
+        const congesEvents = filteredDemandes.map(demande => {
+          const employeeColor = userRole === 'employee' 
+            ? '#4CAF50' 
+            : getEmployeeColor(demande.utilisateur_id);
+
+          // Ajouter à la légende si c'est un manager/RH
+          if (userRole !== 'employee') {
+            const employeeName = demande.user_name || `Employé ${demande.utilisateur_id}`;
+            legendMap.set(demande.utilisateur_id, {
+              name: employeeName,
+              color: employeeColor
+            });
           }
-        }));
+
+          return {
+            title: userRole === 'employee' 
+              ? `Congé: ${demande.type_conge || 'Type ' + demande.type_conge_id}` 
+              : `${demande.user_name || 'Employé'} - Type ${demande.type_conge_id}`,
+            start: new Date(demande.date_debut).toISOString().split('T')[0],
+            end: new Date(demande.date_fin).toISOString().split('T')[0],
+            backgroundColor: employeeColor,
+            className: 'conge-event',
+            extendedProps: {
+              description: demande.raison || '',
+              type: 'conge',
+              employeeId: demande.utilisateur_id
+            }
+          };
+        });
+
+        // Mettre à jour la légende des employés
+        setEmployeeLegend(legendMap);
 
         // Créer les événements des jours fériés
         const feriesEvents = joursFeries2025.map(ferie => ({
@@ -152,10 +207,24 @@ const Calendar = ({ userRole }) => {
   return (
     <div className="calendar-container">
       <div className="legend">
-        <div className="legend-item">
-          <span className="color-box leave"></span>
-          <span>{userRole === 'employee' ? 'Mes congés approuvés' : 'Congés approuvés'}</span>
-        </div>
+        {userRole === 'employee' ? (
+          <div className="legend-item">
+            <span className="color-box leave"></span>
+            <span>Mes congés approuvés</span>
+          </div>
+        ) : (
+          <div className="legend-section">
+            <div className="legend-title">Employés</div>
+            <div className="legend-employees">
+              {Array.from(employeeLegend.values()).map(({name, color}) => (
+                <div key={name} className="legend-item">
+                  <span className="color-box" style={{backgroundColor: color}}></span>
+                  <span>{name}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
         <div className="legend-item">
           <span className="color-box ferie"></span>
           <span>Jours fériés</span>

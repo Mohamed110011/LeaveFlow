@@ -1,4 +1,79 @@
 {
+  "dashboard": {
+    "title": "Tableau de bord",
+    "stats": {
+      "remainingDays": "Jours restants",
+      "daysAvailable": "jours disponibles",
+      "pendingRequests": "Demandes en attente",
+      "awaitingApproval": "en attente d'approbation",
+      "teamAbsences": "Absences d'équipe",
+      "peopleOff": "personnes absentes aujourd'hui"
+    },
+    "upcomingLeaves": {
+      "title": "Congés à venir",
+      "noUpcoming": "Aucun congé prévu"
+    },
+    "hr": {
+      "welcome": "Bienvenue",
+      "allDepartments": "Tous les départements",
+      "leaveCalendar": "Calendrier des congés"
+    }
+  },
+  "calendar": {
+    "title": "Calendrier des congés",
+    "filters": {
+      "holidays": "Jours fériés",
+      "pendingLeaves": "Congés en attente",
+      "approvedLeaves": "Congés approuvés",
+      "rejectedLeaves": "Congés refusés",
+      "showHolidays": "Afficher les jours fériés",
+      "showTeamLeaves": "Afficher les congés de l'équipe",
+      "allDepartments": "Tous les départements",
+      "selectDepartment": "Sélectionner un département",
+      "selectEmployee": "Sélectionner un employé"
+    },
+    "legend": {
+      "holiday": "Jour férié",
+      "pendingLeave": "En attente",
+      "approvedLeave": "Approuvé",
+      "rejectedLeave": "Refusé",
+      "vacation": "Congés",
+      "sickLeave": "Arrêt maladie",
+      "workFromHome": "Télétravail"
+    },
+    "views": {
+      "month": "Mois",
+      "week": "Semaine",
+      "day": "Jour",
+      "list": "Liste"
+    },
+    "buttons": {
+      "today": "Aujourd'hui",
+      "prev": "Précédent",
+      "next": "Suivant"
+    },
+    "events": {
+      "holiday": "Jour férié",
+      "vacation": "Congés",
+      "sickLeave": "Arrêt maladie",
+      "workFromHome": "Télétravail"
+    },
+    "errors": {
+      "loadFailed": "Erreur lors du chargement du calendrier",
+      "fetchDepartments": "Erreur lors de la récupération des départements"
+    },
+    "modal": {
+      "addTitle": "Ajouter un congé",
+      "editTitle": "Modifier le congé",
+      "type": "Type de congé",
+      "startDate": "Date de début",
+      "endDate": "Date de fin",
+      "description": "Description",
+      "save": "Enregistrer",
+      "cancel": "Annuler",
+      "delete": "Supprimer"
+    }
+  },
   "chatbot": {
     "toggleButton": "Assistant",
     "title": "Assistant LeaveFlow",
