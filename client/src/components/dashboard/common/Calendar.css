@@ -26,8 +26,8 @@
   border-radius: 4px;
 }
 
-.color-box.holiday {
-  background-color: #ff9f89;
+.color-box.ferie {
+  background-color: #FF4444;
 }
 
 .color-box.leave {
@@ -35,16 +35,53 @@
 }
 
 /* Styles pour les événements du calendrier */
-.holiday-event {
-  background-color: #ff9f89 !important;
+.ferie-event {
+  background-color: #FF4444 !important;
   border: none !important;
+  font-weight: bold !important;
   color: white !important;
+  opacity: 0.9 !important;
 }
 
-.leave-event {
+.ferie-event:hover {
+  opacity: 1 !important;
+}
+
+.conge-event {
   background-color: #4CAF50 !important;
   border: none !important;
   color: white !important;
+  opacity: 0.9 !important;
+}
+
+.conge-event:hover {
+  opacity: 1 !important;
+}
+
+/* Style pour le message d'erreur */
+.error-message {
+  color: #FF4444;
+  padding: 10px;
+  margin: 10px 0;
+  background-color: #FFE8E8;
+  border-radius: 4px;
+  text-align: center;
+}
+
+/* Style pour le loading */
+.fc-loading {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+}
+
+/* Style des tooltips */
+.fc-event {
+  cursor: pointer;
+}
+
+.fc-event:hover {
+  opacity: 1;
 }
 
 /* Style pour le calendrier FullCalendar */
@@ -64,12 +101,4 @@
 .fc-button-primary:hover {
   background-color: #115293 !important;
   border-color: #115293 !important;
-}
-
-.error-message {
-  color: #f44336;
-  padding: 15px;
-  background-color: #ffebee;
-  border-radius: 4px;
-  margin: 10px 0;
 }

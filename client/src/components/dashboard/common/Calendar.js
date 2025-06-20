@@ -3,6 +3,76 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import './Calendar.css';
 
+// Liste statique des jours fériés
+const joursFeries2025 = [
+  {
+    title: "Jour de l'an",
+    start: "2025-01-01",
+    end: "2025-01-01",
+    description: "Nouvel an"
+  },
+  {
+    title: "Pâques",
+    start: "2025-04-20",
+    end: "2025-04-20",
+    description: "Dimanche de Pâques"
+  },
+  {
+    title: "Fête du Travail",
+    start: "2025-05-01",
+    end: "2025-05-01",
+    description: "Journée internationale du travail"
+  },
+  {
+    title: "Victoire 1945",
+    start: "2025-05-08",
+    end: "2025-05-08",
+    description: "Armistice de la Seconde Guerre mondiale"
+  },
+  {
+    title: "Ascension",
+    start: "2025-05-29",
+    end: "2025-05-29",
+    description: "Jeudi de l'Ascension"
+  },
+  {
+    title: "Pentecôte",
+    start: "2025-06-08",
+    end: "2025-06-08",
+    description: "Dimanche de Pentecôte"
+  },
+  {
+    title: "Fête Nationale",
+    start: "2025-07-14",
+    end: "2025-07-14",
+    description: "Jour de la Bastille"
+  },
+  {
+    title: "Assomption",
+    start: "2025-08-15",
+    end: "2025-08-15",
+    description: "Assomption de Marie"
+  },
+  {
+    title: "Toussaint",
+    start: "2025-11-01",
+    end: "2025-11-01",
+    description: "Fête de tous les saints"
+  },
+  {
+    title: "Armistice 1918",
+    start: "2025-11-11",
+    end: "2025-11-11",
+    description: "Armistice de la Première Guerre mondiale"
+  },
+  {
+    title: "Noël",
+    start: "2025-12-25",
+    end: "2025-12-25",
+    description: "Jour de Noël"
+  }
+];
+
 const Calendar = ({ userRole }) => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -19,7 +89,6 @@ const Calendar = ({ userRole }) => {
         
         if (!response.ok) throw new Error("Erreur d'authentification");
         const userData = await response.json();
-        console.log('Utilisateur connecté:', userData);
         
         // Récupérer les congés
         const congeDemandes = await fetch("http://localhost:5001/dashboard/demandes-conge", {
@@ -35,35 +104,37 @@ const Calendar = ({ userRole }) => {
           const isMatch = userRole === 'employee' 
             ? demande.utilisateur_id === userData.user_id && demande.statut === 'Approuve'
             : demande.statut === 'Approuve';
-            
-          console.log('Analyse demande:', {
-            demandeId: demande.id,
-            utilisateurId: demande.utilisateur_id,
-            userDataId: userData.user_id,
-            estMatch: isMatch,
-            statut: demande.statut
-          });
-          
           return isMatch;
         });
 
-        console.log('Demandes filtrées:', filteredDemandes);
-
-        // Créer les événements pour le calendrier
-        const calendarEvents = filteredDemandes.map(demande => ({
+        // Créer les événements de congés
+        const congesEvents = filteredDemandes.map(demande => ({
           title: userRole === 'employee' 
             ? `Congé: ${demande.type_conge || 'Type ' + demande.type_conge_id}` 
             : `${demande.user_name || 'Employé'} - Type ${demande.type_conge_id}`,
           start: new Date(demande.date_debut).toISOString().split('T')[0],
           end: new Date(demande.date_fin).toISOString().split('T')[0],
           backgroundColor: '#4CAF50',
+          className: 'conge-event',
           extendedProps: {
-            description: demande.raison || ''
+            description: demande.raison || '',
+            type: 'conge'
           }
         }));
 
-        console.log('Événements du calendrier:', calendarEvents);
-        setEvents(calendarEvents);
+        // Créer les événements des jours fériés
+        const feriesEvents = joursFeries2025.map(ferie => ({
+          ...ferie,
+          className: 'ferie-event',
+          backgroundColor: '#FF4444',
+          extendedProps: {
+            type: 'ferie',
+            description: ferie.description
+          }
+        }));
+
+        // Combiner tous les événements
+        setEvents([...congesEvents, ...feriesEvents]);
         setLoading(false);
       } catch (err) {
         console.error('Erreur:', err);
@@ -84,6 +155,10 @@ const Calendar = ({ userRole }) => {
         <div className="legend-item">
           <span className="color-box leave"></span>
           <span>{userRole === 'employee' ? 'Mes congés approuvés' : 'Congés approuvés'}</span>
+        </div>
+        <div className="legend-item">
+          <span className="color-box ferie"></span>
+          <span>Jours fériés</span>
         </div>
       </div>
       <FullCalendar
