@@ -156,10 +156,7 @@ const DashboardEmployee = () => {
             </div>
           </div>
 
-          <div className="calendar-section">
-            <h2>Mon calendrier de congés</h2>
-            <Calendar userRole="employee" userId={userId} />
-          </div>
+         
         </main>
       )}
     </div>

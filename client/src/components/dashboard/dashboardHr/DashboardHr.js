@@ -201,10 +201,7 @@ const DashboardHr = ({ setAuth }) => {
           </section>
 
           {/* Calendrier des congés */}
-          <div className="calendar-section">
-            <h2>Calendrier des congés</h2>
-            <Calendar userRole="hr" />
-          </div>
+         
         </main>
       )}
     </div>

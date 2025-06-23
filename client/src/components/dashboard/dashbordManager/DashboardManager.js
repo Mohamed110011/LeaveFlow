@@ -147,11 +147,7 @@ const DashboardManager = ({ setAuth }) => {
             </div>
           </div>
 
-          {/* Calendrier des congés */}
-          <div className="calendar-section">
-            <h2>Calendrier des congés de l'équipe</h2>
-            <Calendar userRole="manager" />
-          </div>
+          
         </main>
       )}
     </div>
