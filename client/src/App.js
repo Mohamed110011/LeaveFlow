@@ -114,7 +114,7 @@ const App = () => {  const [isAuthenticated, setIsAuthenticated] = useState(fals
             </Route>
           </Route>
 
-          <Route path="/" element={<Navigate to="/login" />} />
+          <Route path="/" element={<Navigate to="/landing" />} />
         </Routes>
       </Router>
     </GoogleOAuthProvider>

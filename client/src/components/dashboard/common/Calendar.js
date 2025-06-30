@@ -77,14 +77,10 @@ const joursFeries2025 = [
 const employeeColors = [
   '#4CAF50', // Vert
   '#2196F3', // Bleu
-  '#9C27B0', // Violet
+  '#0D47A1',
   '#FF9800', // Orange
-  '#00BCD4', // Cyan
-  '#FF5722', // Orange foncé
-  '#795548', // Marron
-  '#607D8B', // Bleu gris
-  '#E91E63', // Rose
-  '#673AB7'  // Violet foncé
+  '#F44336', // Rouge
+
 ];
 
 // Fonction pour obtenir une couleur unique par employé
