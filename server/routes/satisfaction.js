@@ -105,4 +105,46 @@ router.post("/", authorization, async (req, res) => {
   }
 });
 
+// Get all employee satisfaction scores (managers and HR only)
+router.get("/all", authorization, async (req, res) => {
+  try {
+    console.log("Access /satisfaction/all - User:", req.user);
+    console.log("Access /satisfaction/all - Role:", req.role);
+    console.log("Token Headers:", req.headers.token);
+
+    // Verify user role in database
+    const userRole = await pool.query(
+      "SELECT role FROM users WHERE user_id = $1",
+      [req.user]
+    );
+    console.log("Database role:", userRole.rows[0]?.role);    // Check if user is manager or HR/RH
+    console.log("Role comparison - Role from token:", JSON.stringify(req.role));
+    const allowedRoles = ['manager', 'hr', 'rh'];
+    const normalizedRole = req.role ? req.role.trim().toLowerCase() : '';
+    
+    if (!allowedRoles.includes(normalizedRole)) {
+      console.log("Access denied - Required roles:", allowedRoles, "Got:", normalizedRole);
+      return res.status(403).json("Access denied: Only managers and HR can view all satisfaction scores");
+    }// Join satisfaction table with users table to get names and filter by active employees
+    const allSatisfaction = await pool.query(`
+      SELECT 
+        es.user_id,
+        u.user_name,
+        es.satisfaction_score,
+        es.comment,
+        es.created_at,
+        u.role as user_role
+      FROM employee_satisfaction es
+      JOIN users u ON es.user_id = u.user_id
+      WHERE u.role = 'employee'
+      ORDER BY es.satisfaction_score DESC, es.created_at DESC
+    `);
+
+    res.json(allSatisfaction.rows);
+  } catch (err) {
+    console.error("Error in GET /satisfaction/all:", err);
+    res.status(500).json("Server error: " + err.message);
+  }
+});
+
 module.exports = router;
