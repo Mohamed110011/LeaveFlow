@@ -1,0 +1,30 @@
+.language-selector {
+  display: flex;
+  gap: 4px;
+  margin: 0 8px;
+}
+
+.language-btn {
+  background: none;
+  border: none;
+  color: inherit;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 14px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.language-btn:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.language-btn.active {
+  background: rgba(0, 0, 0, 0.1);
+  font-weight: bold;
+}
+
+[data-theme="dark"] .language-btn:hover,
+[data-theme="dark"] .language-btn.active {
+  background: rgba(255, 255, 255, 0.1);
+}

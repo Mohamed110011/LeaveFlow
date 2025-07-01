@@ -115,13 +115,11 @@ router.post("/login", validInfo, async (req, res) => {
 
     if (!validPassword) {
       return res.status(401).json("Password or Email is incorrect");
-    }
-
-    // Generate token
+    }    // Generate token
     const user_id = user.rows[0].user_id;
     const role = user.rows[0].role;
     const name = user.rows[0].user_name;
-    const token = jwtGenerator(user_id);
+    const token = jwtGenerator(user_id, role);
 
     res.json({ token, role, name });
     console.log('Login successful for user:', email);
@@ -140,9 +138,7 @@ router.post("/google", async (req, res) => {
     // Check if user exists
     const user = await pool.query("SELECT * FROM users WHERE user_email = $1 OR google_id = $2", 
       [email, google_id]
-    );
-
-    if (user.rows.length > 0) {
+    );    if (user.rows.length > 0) {
       // User exists, update google_id if not set
       if (!user.rows[0].google_id) {
         await pool.query(
@@ -151,6 +147,7 @@ router.post("/google", async (req, res) => {
         );
       }
       const token = jwtGenerator(user.rows[0].user_id, user.rows[0].role);
+      console.log('Generated token with role:', user.rows[0].role); // Debug log
       return res.json({ 
         token, 
         name: user.rows[0].user_name,

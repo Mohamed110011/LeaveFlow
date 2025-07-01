@@ -35,6 +35,9 @@ app.use("/dashboard", require("./routes/dashboard"));
 //HR reports routes
 app.use("/dashboard", require("./routes/dashboard-reports"));
 
+//Satisfaction routes
+app.use("/satisfaction", require("./routes/satisfaction"));
+
 app.listen(5001, () => {
   console.log('Server is running on port 5001');
   console.log('Server configuration completed');

@@ -5,7 +5,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faHourglassHalf,
   faCalendarCheck,
-  faCalendarTimes
+  faCalendarTimes,
+  faFaceSmile,
+  faFaceMeh,
+  faFaceFrown,
+  faStar
 } from '@fortawesome/free-solid-svg-icons';
 import { Pie } from 'react-chartjs-2';
 import {
@@ -14,6 +18,7 @@ import {
   Tooltip,
   Legend
 } from 'chart.js';
+import Calendar from '../common/Calendar';
 import './DashboardEmployee.css';
 
 ChartJS.register(
@@ -24,13 +29,63 @@ ChartJS.register(
 
 const DashboardEmployee = () => {
   const [loading, setLoading] = useState(true);
-  const [name, setName] = useState('');  const [leaveStats, setLeaveStats] = useState({
+  const [name, setName] = useState('');
+  const [userId, setUserId] = useState(null);  const [satisfaction, setSatisfaction] = useState(80); // Score de satisfaction sur 100
+  const [tempSatisfaction, setTempSatisfaction] = useState(80); // Score temporaire
+  const [comment, setComment] = useState('');
+  const [showCommentInput, setShowCommentInput] = useState(false);
+  const [leaveStats, setLeaveStats] = useState({
     pendingRequests: 0,
     approvedRequests: 0,
     rejectedRequests: 0
   });
 
   const navigate = useNavigate();
+  const getSatisfactionScore = async () => {
+    try {
+      const response = await fetch("http://localhost:5001/satisfaction/", {
+        method: "GET",
+        headers: { token: localStorage.token }
+      });
+
+      if (!response.ok) throw new Error("Failed to fetch satisfaction score");
+      const data = await response.json();
+      setSatisfaction(data.satisfaction_score);
+      if (data.comment) {
+        setComment(data.comment);
+      }
+    } catch (err) {
+      console.error("Error fetching satisfaction score:", err.message);
+      // En cas d'erreur, on utilise un score par défaut
+      setSatisfaction(80);
+      setComment('');
+    }
+  };
+  const updateSatisfactionScore = async (newScore, newComment = comment) => {
+    try {
+      const response = await fetch("http://localhost:5001/satisfaction/", {
+        method: "POST",
+        headers: { 
+          token: localStorage.token,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          satisfaction_score: newScore,
+          comment: newComment
+        })
+      });
+
+      if (!response.ok) throw new Error("Failed to update satisfaction score");
+      const data = await response.json();
+      setSatisfaction(data.satisfaction_score);
+      setComment(newComment);
+      setShowCommentInput(false);
+      toast.success("Score de satisfaction mis à jour");
+    } catch (err) {
+      console.error("Error updating satisfaction score:", err.message);
+      toast.error("Erreur lors de la mise à jour du score de satisfaction");
+    }
+  };
 
   const getEmployeeData = async () => {
     setLoading(true);
@@ -44,6 +99,7 @@ const DashboardEmployee = () => {
       if (!profileRes.ok) throw new Error("Failed to fetch profile data");
       const profileData = await profileRes.json();
       setName(profileData.user_name);
+      setUserId(profileData.user_id);
 
       // Get leave requests
       const demandesRes = await fetch("http://localhost:5001/dashboard/demandes-conge", {
@@ -53,22 +109,28 @@ const DashboardEmployee = () => {
 
       if (!demandesRes.ok) throw new Error("Failed to fetch leave requests");
       const demandes = await demandesRes.json();
-        setLeaveStats({
+      setLeaveStats({
         pendingRequests: demandes.filter(d => d.statut === 'En attente').length,
         approvedRequests: demandes.filter(d => d.statut === 'Approuve').length,
         rejectedRequests: demandes.filter(d => d.statut === 'Refuse').length
       });
 
+      // Get satisfaction score
+      await getSatisfactionScore();
+
     } catch (err) {
       console.error(err.message);
-      toast.error("Failed to fetch dashboard data");
+      toast.error("Une erreur est survenue lors du chargement des données");
     } finally {
       setLoading(false);
     }
-  };
-  useEffect(() => {
+  };  useEffect(() => {
     getEmployeeData();
   }, []);
+
+  useEffect(() => {
+    setTempSatisfaction(satisfaction);
+  }, [satisfaction]);
 
   const chartData = {
     labels: ['En attente', 'Approuvées', 'Refusées'],
@@ -125,7 +187,7 @@ const DashboardEmployee = () => {
             <div className="stat-card">
               <FontAwesomeIcon icon={faHourglassHalf} className="stat-icon pending" />
               <div className="stat-info">
-                <h3>Pending Requests</h3>
+                <h3>En attente</h3>
                 <p>{leaveStats.pendingRequests}</p>
               </div>
             </div>
@@ -133,7 +195,7 @@ const DashboardEmployee = () => {
             <div className="stat-card">
               <FontAwesomeIcon icon={faCalendarCheck} className="stat-icon approved" />
               <div className="stat-info">
-                <h3>Approved Requests</h3>
+                <h3>Approuvées</h3>
                 <p>{leaveStats.approvedRequests}</p>
               </div>
             </div>
@@ -141,14 +203,78 @@ const DashboardEmployee = () => {
             <div className="stat-card">
               <FontAwesomeIcon icon={faCalendarTimes} className="stat-icon rejected" />
               <div className="stat-info">
-                <h3>Rejected Requests</h3>
+                <h3>Refusées</h3>
                 <p>{leaveStats.rejectedRequests}</p>
-              </div>            </div>          
-          </div>
+              </div>            </div>          </div>
+          
+          <div className="charts-satisfaction-container">
+            <div className="satisfaction-container">
+              <div className="satisfaction-card satisfaction-transition">
+                <div className="satisfaction-header">
+                  <h3>Satisfaction</h3>
+                  <div className="satisfaction-emoji">                    {tempSatisfaction >= 80 ? (
+                      <FontAwesomeIcon icon={faFaceSmile} style={{ color: "#40c057" }} />
+                    ) : tempSatisfaction >= 50 ? (
+                      <FontAwesomeIcon icon={faFaceMeh} style={{ color: "#ffd43b" }} />
+                    ) : (
+                      <FontAwesomeIcon icon={faFaceFrown} style={{ color: "#ff6b6b" }} />
+                    )}
+                  </div>
+                  <div className="satisfaction-score">{tempSatisfaction}%</div>
+                </div>
 
-          <div className="chart-container">
-            <div className="chart-wrapper">
-              <Pie data={chartData} options={chartOptions} />
+                <div className="satisfaction-controls">
+                  <FontAwesomeIcon
+                    icon={faStar}                    className={`control-icon ${tempSatisfaction >= 20 ? 'active' : ''}`}
+                    onClick={() => setTempSatisfaction(20)}
+                  />
+                  <FontAwesomeIcon
+                    icon={faStar}
+                    className={`control-icon ${tempSatisfaction >= 40 ? 'active' : ''}`}
+                    onClick={() => setTempSatisfaction(40)}
+                  />
+                  <FontAwesomeIcon
+                    icon={faStar}
+                    className={`control-icon ${tempSatisfaction >= 60 ? 'active' : ''}`}
+                    onClick={() => setTempSatisfaction(60)}
+                  />
+                  <FontAwesomeIcon
+                    icon={faStar}
+                    className={`control-icon ${tempSatisfaction >= 80 ? 'active' : ''}`}
+                    onClick={() => setTempSatisfaction(80)}
+                  />
+                  <FontAwesomeIcon
+                    icon={faStar}
+                    className={`control-icon ${tempSatisfaction >= 100 ? 'active' : ''}`}
+                    onClick={() => setTempSatisfaction(100)}
+                  />
+                </div>
+
+                <div className="satisfaction-comment">
+                  {showCommentInput ? (
+                    <>
+                      <textarea
+                        value={comment}
+                        onChange={(e) => setComment(e.target.value)}
+                        placeholder="Ajouter un commentaire..."
+                        autoFocus
+                      />                      <button onClick={() => updateSatisfactionScore(tempSatisfaction, comment)}>
+                        Enregistrer
+                      </button>
+                    </>
+                  ) : (
+                    <div onClick={() => setShowCommentInput(true)} style={{ cursor: 'pointer' }}>
+                      {comment || "Cliquez pour ajouter un commentaire..."}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="chart-container">
+              <div className="chart-wrapper">
+                <Pie data={chartData} options={chartOptions} />
+              </div>
             </div>
           </div>
         </main>

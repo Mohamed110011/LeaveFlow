@@ -5,13 +5,26 @@ import {
   faFileExcel, 
   faCalendarAlt, 
   faUserTie, 
-  faBuildingUser, 
   faSearch, 
-  faDownload,
   faChartLine,
   faFilter,
-  faSpinner
+  faSpinner,
+  faMicrophone,  // Ajout de l'icône du microphone
+  faCircleStop   // Ajout de l'icône stop
 } from '@fortawesome/free-solid-svg-icons';
+import { 
+  startOfDay, 
+  endOfDay, 
+  startOfWeek, 
+  endOfWeek, 
+  startOfMonth, 
+  endOfMonth,
+  subWeeks,
+  subMonths,
+  parse,
+  format
+} from 'date-fns';
+import { fr } from 'date-fns/locale';
 import { toast } from 'react-toastify';
 import './rapports.css';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement, PointElement, LineElement } from 'chart.js';
@@ -52,16 +65,13 @@ const formatNumber = (value, decimals = 0) => {
   }
 };
 
-const Rapports = () => {
-  // State for filters
+const Rapports = () => {  // State for filters
   const [dateRange, setDateRange] = useState({ startDate: '', endDate: '' });
   const [selectedEmployee, setSelectedEmployee] = useState('');
-  const [selectedDepartment, setSelectedDepartment] = useState('');
   const [employees, setEmployees] = useState([]);
-  const [departments, setDepartments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [reportData, setReportData] = useState(null);
-  const [reportType, setReportType] = useState('leaves'); // 'leaves', 'balance', 'departments'
+  const [reportType, setReportType] = useState('leaves'); // 'leaves', 'balance'
   
   // Charts references
   const barChartRef = useRef(null);
@@ -69,8 +79,7 @@ const Rapports = () => {
   // Fetch employees and departments on component mount
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true);
-      try {
+      setLoading(true);      try {
         // Fetch employees
         const employeesRes = await fetch('http://localhost:5001/dashboard/users', {
           method: 'GET',
@@ -80,15 +89,6 @@ const Rapports = () => {
         if (!employeesRes.ok) throw new Error('Failed to fetch employees');
         const employeesData = await employeesRes.json();
         setEmployees(employeesData);
-        
-        // Fetch departments
-        const deptsRes = await fetch('http://localhost:5001/dashboard/departements', {
-          method: 'GET',
-          headers: { token: localStorage.token }
-        });
-        
-        if (!deptsRes.ok) throw new Error('Failed to fetch departments');        const deptsData = await deptsRes.json();
-        setDepartments(deptsData);
         
         // Initialize with empty date range
         setDateRange({
@@ -117,20 +117,17 @@ const Rapports = () => {
     setLoading(true);
     setReportData(null); // Reset previous report data
     
-    try {
-      // Build query parameters
+    try {      // Build query parameters
       const params = new URLSearchParams();
       params.append('startDate', dateRange.startDate);
       params.append('endDate', dateRange.endDate);
       if (selectedEmployee) params.append('employeeId', selectedEmployee);
-      if (selectedDepartment) params.append('departmentId', selectedDepartment);
       params.append('reportType', reportType);
       
       console.log('Generating report with params:', {
         startDate: dateRange.startDate,
         endDate: dateRange.endDate,
         employeeId: selectedEmployee || 'all',
-        departmentId: selectedDepartment || 'all',
         reportType
       });
       
@@ -149,9 +146,10 @@ const Rapports = () => {
       console.log('Report data received:', data);
       
       // Handle empty results
-      if ((reportType === 'leaves' && (!data.details || data.details.length === 0)) ||
-          (reportType === 'balance' && (!data.details || data.details.length === 0)) ||
-          (reportType === 'departments' && (!data.departments || data.departments.length === 0))) {
+      const hasNoData = (reportType === 'leaves' && (!data.details || data.details.length === 0)) ||
+                       (reportType === 'balance' && (!data.details || data.details.length === 0));
+                       
+      if (hasNoData) {
         toast.info('No data found for the selected criteria. Try adjusting your filters.');
       } else {
         toast.success('Report generated successfully');
@@ -168,86 +166,7 @@ const Rapports = () => {
       setLoading(false);
     }
   };
-  
-  // Generate mock data for demonstration
-  const generateMockData = () => {
-    // Mock data based on report type
-    let mockData;
-    
-    switch (reportType) {
-      case 'leaves':
-        mockData = {
-          title: 'Leave Requests Report',
-          period: `${dateRange.startDate} to ${dateRange.endDate}`,
-          summary: {
-            total: 24,
-            approved: 18,
-            rejected: 3,
-            pending: 3
-          },
-          byDepartment: [
-            { name: 'IT', count: 8, approved: 7, rejected: 1, pending: 0 },
-            { name: 'HR', count: 5, approved: 4, rejected: 0, pending: 1 },
-            { name: 'Finance', count: 6, approved: 4, rejected: 1, pending: 1 },
-            { name: 'Marketing', count: 5, approved: 3, rejected: 1, pending: 1 }
-          ],
-          details: [
-            { id: 1, employee: 'John Doe', department: 'IT', startDate: '2025-05-15', endDate: '2025-05-18', type: 'Annual Leave', status: 'Approved' },
-            { id: 2, employee: 'Jane Smith', department: 'HR', startDate: '2025-05-20', endDate: '2025-05-25', type: 'Sick Leave', status: 'Approved' },
-            { id: 3, employee: 'Michael Brown', department: 'Finance', startDate: '2025-05-22', endDate: '2025-05-23', type: 'Personal Leave', status: 'Rejected' },
-            { id: 4, employee: 'Lisa Johnson', department: 'Marketing', startDate: '2025-06-01', endDate: '2025-06-05', type: 'Annual Leave', status: 'Pending' }
-          ]
-        };
-        break;
-      
-      case 'balance':
-        mockData = {
-          title: 'Leave Balance Report',
-          period: `As of ${new Date().toISOString().split('T')[0]}`,
-          summary: {
-            totalEmployees: 15,
-            avgAnnualBalance: 18.5,
-            avgSickBalance: 12.2
-          },
-          byDepartment: [
-            { name: 'IT', avgAnnual: 17.2, avgSick: 14.5 },
-            { name: 'HR', avgAnnual: 19.5, avgSick: 11.8 },
-            { name: 'Finance', avgAnnual: 18.3, avgSick: 10.5 },
-            { name: 'Marketing', avgAnnual: 19.0, avgSick: 12.0 }
-          ],
-          details: [
-            { id: 1, employee: 'John Doe', department: 'IT', annualBalance: 18, sickBalance: 15, totalTaken: 12 },
-            { id: 2, employee: 'Jane Smith', department: 'HR', annualBalance: 20, sickBalance: 12, totalTaken: 10 },
-            { id: 3, employee: 'Michael Brown', department: 'Finance', annualBalance: 15, sickBalance: 10, totalTaken: 15 },
-            { id: 4, employee: 'Lisa Johnson', department: 'Marketing', annualBalance: 22, sickBalance: 12, totalTaken: 8 }
-          ]
-        };
-        break;
-      
-      case 'departments':
-        mockData = {
-          title: 'Department Leave Analysis',
-          period: `${dateRange.startDate} to ${dateRange.endDate}`,
-          summary: {
-            totalDepartments: 4,
-            highestLeaves: 'IT (25 days)',
-            lowestLeaves: 'Finance (18 days)'
-          },
-          departments: [
-            { name: 'IT', totalDays: 25, employeeCount: 8, avgPerEmployee: 3.1 },
-            { name: 'HR', totalDays: 20, employeeCount: 5, avgPerEmployee: 4.0 },
-            { name: 'Finance', totalDays: 18, employeeCount: 6, avgPerEmployee: 3.0 },
-            { name: 'Marketing', totalDays: 22, employeeCount: 6, avgPerEmployee: 3.7 }
-          ]
-        };
-        break;
-      
-      default:
-        mockData = { error: 'Invalid report type' };
-    }
-    
-    setReportData(mockData);
-  };  
+    // Removed unused mock data generation function
   
   // Export as PDF
   const exportPDF = () => {
@@ -300,12 +219,6 @@ const Rapports = () => {
           ['Avg. Annual Balance', reportData.summary.avgAnnualBalance + ' days'],
           ['Avg. Sick Balance', reportData.summary.avgSickBalance + ' days']
         ];
-      } else if (reportType === 'departments') {
-        summaryData = [
-          ['Total Departments', reportData.summary.totalDepartments],
-          ['Highest Leave Usage', reportData.summary.highestLeaves],
-          ['Lowest Leave Usage', reportData.summary.lowestLeaves]
-        ];
       }
       
       // Use autoTable for the summary
@@ -352,14 +265,6 @@ const Rapports = () => {
           formatNumber(item.annualbalance) + ' days',
           formatNumber(item.sickbalance) + ' days',
           formatNumber(item.totaltaken) + ' days'
-        ]);
-      } else if (reportType === 'departments') {
-        columns = ['Department', 'Total Days', 'Employee Count', 'Avg per Employee'];
-        data = reportData.departments.map(dept => [
-          dept.name,
-          formatNumber(dept.totaldays) + ' days',
-          formatNumber(dept.employeecount),
-          formatNumber(parseFloat(dept.avgperemployee), 1) + ' days'
         ]);
       }
       
@@ -467,16 +372,6 @@ const Rapports = () => {
               formatNumber(item.totaltaken) + ' days'
             ]);
           });
-        } else if (reportType === 'departments') {
-          detailsData.push(['Department', 'Total Days', 'Employee Count', 'Avg per Employee']);
-          reportData.departments.forEach(dept => {
-            detailsData.push([
-              dept.name,
-              formatNumber(dept.totaldays) + ' days',
-              formatNumber(dept.employeecount),
-              formatNumber(parseFloat(dept.avgperemployee), 1) + ' days'
-            ]);
-          });
         }
         
         const detailsWS = utils.aoa_to_sheet(detailsData);
@@ -502,30 +397,27 @@ const Rapports = () => {
     // Prepare chart data for leaves report
   const prepareLeaveChartData = () => {
     if (!reportData || reportType !== 'leaves') return null;
-    
-    // Bar chart data
+      // Bar chart data for leaves status
     const barData = {
-      labels: reportData.byDepartment.map(dept => dept.name),
+      labels: ['Approved', 'Rejected', 'Pending'],
       datasets: [
         {
-          label: 'Approved',
-          data: reportData.byDepartment.map(dept => parseInt(dept.approved) || 0),
-          backgroundColor: 'rgba(75, 192, 192, 0.6)',
-          borderColor: 'rgba(75, 192, 192, 1)',
-          borderWidth: 1
-        },
-        {
-          label: 'Rejected',
-          data: reportData.byDepartment.map(dept => parseInt(dept.rejected) || 0),
-          backgroundColor: 'rgba(255, 99, 132, 0.6)',
-          borderColor: 'rgba(255, 99, 132, 1)',
-          borderWidth: 1
-        },
-        {
-          label: 'Pending',
-          data: reportData.byDepartment.map(dept => parseInt(dept.pending) || 0),
-          backgroundColor: 'rgba(255, 206, 86, 0.6)',
-          borderColor: 'rgba(255, 206, 86, 1)',
+          label: 'Leave Requests',
+          data: [
+            reportData.summary.approved || 0,
+            reportData.summary.rejected || 0,
+            reportData.summary.pending || 0
+          ],
+          backgroundColor: [
+            'rgba(75, 192, 192, 0.6)',
+            'rgba(255, 99, 132, 0.6)',
+            'rgba(255, 206, 86, 0.6)'
+          ],
+          borderColor: [
+            'rgba(75, 192, 192, 1)',
+            'rgba(255, 99, 132, 1)',
+            'rgba(255, 206, 86, 1)'
+          ],
           borderWidth: 1
         }
       ]
@@ -557,87 +449,42 @@ const Rapports = () => {
     };
     
     return { barData, pieData };
-  };
-  // Prepare chart data for balance report
+  };  // Prepare chart data for balance report
   const prepareBalanceChartData = () => {
     if (!reportData || reportType !== 'balance') return null;
     
-    // Bar chart data
+    // Bar chart data for leaves balance
     const barData = {
-      labels: reportData.byDepartment.map(dept => dept.name),
+      labels: ['Annual Balance', 'Sick Balance'],
       datasets: [
         {
-          label: 'Annual Leave Balance',
-          data: reportData.byDepartment.map(dept => parseFloat(dept.avgannual || 0)),
-          backgroundColor: 'rgba(54, 162, 235, 0.6)',
-          borderColor: 'rgba(54, 162, 235, 1)',
-          borderWidth: 1
-        },
-        {
-          label: 'Sick Leave Balance',
-          data: reportData.byDepartment.map(dept => parseFloat(dept.avgsick || 0)),
-          backgroundColor: 'rgba(153, 102, 255, 0.6)',
-          borderColor: 'rgba(153, 102, 255, 1)',
+          label: 'Leave Balance',
+          data: [
+            reportData.summary.avgAnnualBalance || 0,
+            reportData.summary.avgSickBalance || 0
+          ],
+          backgroundColor: [
+            'rgba(54, 162, 235, 0.6)',
+            'rgba(153, 102, 255, 0.6)'
+          ],
+          borderColor: [
+            'rgba(54, 162, 235, 1)',
+            'rgba(153, 102, 255, 1)'
+          ],
           borderWidth: 1
         }
       ]
     };
     
     return { barData };
-  };
-  // Prepare chart data for departments report
-  const prepareDepartmentChartData = () => {
-    if (!reportData || reportType !== 'departments') return null;
-    
-    // Bar chart data
-    const barData = {
-      labels: reportData.departments.map(dept => dept.name),
-      datasets: [
-        {
-          label: 'Total Leave Days',
-          data: reportData.departments.map(dept => parseInt(dept.totaldays || 0)),
-          backgroundColor: 'rgba(54, 162, 235, 0.6)',
-          borderColor: 'rgba(54, 162, 235, 1)',
-          borderWidth: 1
-        }
-      ]
-    };
-    
-    // Pie chart data
-    const pieData = {
-      labels: reportData.departments.map(dept => dept.name),
-      datasets: [
-        {
-          data: reportData.departments.map(dept => parseInt(dept.totaldays || 0)),
-          backgroundColor: [
-            'rgba(54, 162, 235, 0.6)',
-            'rgba(75, 192, 192, 0.6)',
-            'rgba(255, 99, 132, 0.6)',
-            'rgba(255, 206, 86, 0.6)'
-          ],
-          borderColor: [
-            'rgba(54, 162, 235, 1)',
-            'rgba(75, 192, 192, 1)',
-            'rgba(255, 99, 132, 1)',
-            'rgba(255, 206, 86, 1)'
-          ],
-          borderWidth: 1
-        }
-      ]
-    };
-    
-    return { barData, pieData };
-  };
-  
-  // Get the appropriate chart data based on report type
+  };  // Removed departments chart data
+    // Get the appropriate chart data based on report type
   const getChartData = () => {
     switch (reportType) {
       case 'leaves':
         return prepareLeaveChartData();
       case 'balance':
         return prepareBalanceChartData();
-      case 'departments':
-        return prepareDepartmentChartData();
       default:
         return null;
     }
@@ -712,33 +559,7 @@ const Rapports = () => {
             </table>
           </div>
         );
-      
-      case 'departments':
-        return (
-          <div className="report-details">
-            <h3>Department Analysis Details</h3>
-            <table className="report-table">
-              <thead>
-                <tr>
-                  <th>Department</th>
-                  <th>Total Leave Days</th>
-                  <th>Employee Count</th>
-                  <th>Average per Employee</th>
-                </tr>
-              </thead>
-              <tbody>                
-                {reportData.departments.map((dept, index) => (
-                  <tr key={index}>
-                    <td>{dept.name}</td>
-                    <td>{formatNumber(dept.totaldays)} days</td>
-                    <td>{formatNumber(dept.employeecount)}</td>
-                    <td>{formatNumber(parseFloat(dept.avgperemployee), 1)} days</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        );
+  
       
       default:
         return null;
@@ -774,11 +595,255 @@ const Rapports = () => {
     }
   };
 
+  // État pour la commande vocale
+  const [isListening, setIsListening] = useState(false);
+  const [voiceCommand, setVoiceCommand] = useState('');
+
+  // Fonction pour gérer la commande vocale
+  const handleVoiceCommand = () => {
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+      console.error('La reconnaissance vocale n\'est pas supportée dans ce navigateur');
+      toast.error('La reconnaissance vocale n\'est pas supportée dans ce navigateur');
+      return;
+    }
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+
+    recognition.lang = 'fr-FR';
+    recognition.continuous = false;
+    recognition.interimResults = false;
+
+    recognition.onstart = () => {
+      console.log('🎤 Début de l\'écoute vocale');
+      setIsListening(true);
+      toast.info('Écoute en cours...');
+    };    recognition.onresult = (event) => {      const command = event.results[0][0].transcript;
+      console.log('🗣️ Commande vocale reçue:', command);
+      setVoiceCommand(command);      // Détecter le type de rapport et l'employé
+      const commandLower = command.toLowerCase();
+
+      // Recherche d'un employé mentionné dans la commande
+      const employeeMatch = employees.find(emp => 
+        commandLower.includes(emp.user_name.toLowerCase()) || 
+        commandLower.includes('pour ' + emp.user_name.toLowerCase()) ||
+        commandLower.includes('de ' + emp.user_name.toLowerCase())
+      );
+
+      if (employeeMatch) {
+        console.log('👤 Employé sélectionné:', employeeMatch.user_name);
+        setSelectedEmployee(employeeMatch.user_id);
+        toast.info(`Employé sélectionné : ${employeeMatch.user_name}`);
+      } else if (commandLower.includes('tous') || commandLower.includes('all')) {
+        console.log('👥 Sélection de tous les employés');
+        setSelectedEmployee('');
+        toast.info('Sélection : Tous les employés');
+      }
+
+      // Détecter le type de rapport
+      if (commandLower.includes('solde') || commandLower.includes('balance') || commandLower.includes('disponible')) {
+        console.log('📊 Changement vers le rapport de solde de congés');
+        setReportType('balance');
+        toast.info('Type de rapport : Solde de congés');
+      } else if (commandLower.includes('demande') || commandLower.includes('request')) {
+        console.log('📊 Changement vers le rapport des demandes de congés');
+        setReportType('leaves');
+        toast.info('Type de rapport : Demandes de congés');
+      }
+
+      // Parser la commande vocale pour les dates
+      const dates = parseDateFromVoiceCommand(command);
+      if (dates) {
+        console.log('📅 Dates extraites:', dates);
+        setDateRange({
+          startDate: dates.startDate,
+          endDate: dates.endDate
+        });
+        
+        // Générer automatiquement le rapport après avoir défini les dates
+        setTimeout(() => {
+          console.log('📊 Génération automatique du rapport après définition des dates');
+          generateReport();
+        }, 500);
+      }
+      
+      // Commande de génération explicite
+      else if (commandLower.includes('générer') || commandLower.includes('rapport')) {
+        console.log('📊 Commande de génération de rapport détectée');
+        generateReport();
+      }
+    };
+
+    recognition.onerror = (event) => {
+      console.error('❌ Erreur de reconnaissance vocale:', event.error);
+      toast.error(`Erreur de reconnaissance vocale: ${event.error}`);
+      setIsListening(false);
+    };
+
+    recognition.onend = () => {
+      console.log('🛑 Fin de l\'écoute vocale');
+      setIsListening(false);
+    };
+
+    if (!isListening) {
+      try {
+        recognition.start();
+      } catch (error) {
+        console.error('❌ Erreur lors du démarrage de la reconnaissance:', error);
+        toast.error('Erreur lors du démarrage de la reconnaissance vocale');
+        setIsListening(false);
+      }
+    } else {
+      recognition.stop();
+      setVoiceCommand('');
+    }
+  };
+  // Fonction pour mettre à jour les dates
+  const updateDateRange = (startDate, endDate) => {
+    setDateRange({
+      startDate: format(startDate, 'yyyy-MM-dd'),
+      endDate: format(endDate, 'yyyy-MM-dd')
+    });
+  };
+  // Date patterns pour le parsing vocal
+  const datePatterns = {
+    today: /aujourd'hui|maintenant/i,
+    thisWeek: /cette semaine|semaine en cours/i,
+    thisMonth: /ce mois|mois en cours/i,
+    lastWeek: /semaine dernière|dernère semaine/i,
+    lastMonth: /mois dernier|dernier mois/i,    specific: /(?:du |de |depuis )?(\d{1,2})(?:er)?\s*(?:janvier|février|mars|avril|mai|juin|juillet|août|septembre|octobre|novembre|décembre)\s*(?:\d{4})?\s*(?:au|jusqu'au|à|jusque?|jusqu'à)\s*(\d{1,2})(?:er)?\s*(?:janvier|février|mars|avril|mai|juin|juillet|août|septembre|octobre|novembre|décembre)\s*(?:\d{4})?/i,
+    specificMultiMonth: /(?:du |de |depuis )?(\d{1,2})(?:er)?\s*(janvier|février|mars|avril|mai|juin|juillet|août|septembre|octobre|novembre|décembre)\s*(?:\d{4})?\s*(?:au|jusqu'au|à|jusque?|jusqu'à)\s*(\d{1,2})(?:er)?\s*(janvier|février|mars|avril|mai|juin|juillet|août|septembre|octobre|novembre|décembre)\s*(?:\d{4})?/i,
+    specificMonth: /(?:rapport|congé).*(?:de |du |pour |en )(\d{1,2}(?:er)?\s+)?(\w+)(?:\s+(\d{4}))?/i
+  };
+  // Parser une commande vocale pour extraire les dates
+  const parseDateFromVoiceCommand = (command) => {
+    console.log('🔍 Analyse de la commande vocale pour les dates:', command);
+    
+    const now = new Date();
+    let startDate = null;
+    let endDate = null;
+
+    // Aujourd'hui
+    if (datePatterns.today.test(command)) {
+      startDate = startOfDay(now);
+      endDate = endOfDay(now);
+      console.log('📅 Période: aujourd\'hui');
+    }
+    // Cette semaine
+    else if (datePatterns.thisWeek.test(command)) {
+      startDate = startOfWeek(now, { weekStartsOn: 1 });
+      endDate = endOfWeek(now, { weekStartsOn: 1 });
+      console.log('📅 Période: cette semaine');
+    }
+    // Ce mois
+    else if (datePatterns.thisMonth.test(command)) {
+      startDate = startOfMonth(now);
+      endDate = endOfMonth(now);
+      console.log('📅 Période: ce mois');
+    }
+    // Semaine dernière
+    else if (datePatterns.lastWeek.test(command)) {
+      startDate = startOfWeek(subWeeks(now, 1), { weekStartsOn: 1 });
+      endDate = endOfWeek(subWeeks(now, 1), { weekStartsOn: 1 });
+      console.log('📅 Période: semaine dernière');
+    }
+    // Mois dernier
+    else if (datePatterns.lastMonth.test(command)) {
+      startDate = startOfMonth(subMonths(now, 1));
+      endDate = endOfMonth(subMonths(now, 1));
+      console.log('📅 Période: mois dernier');
+    }    // Dates spécifiques multi-mois
+    else if (datePatterns.specificMultiMonth.test(command)) {
+      const match = command.match(datePatterns.specificMultiMonth);
+      try {
+        const currentYear = new Date().getFullYear();
+        const startDay = parseInt(match[1]);
+        const startMonth = match[2].toLowerCase();
+        const endDay = parseInt(match[3]);
+        const endMonth = match[4].toLowerCase();
+        
+        startDate = parse(`${startDay} ${startMonth} ${currentYear}`, 'd MMMM yyyy', new Date(), { locale: fr });
+        endDate = parse(`${endDay} ${endMonth} ${currentYear}`, 'd MMMM yyyy', new Date(), { locale: fr });
+        
+        console.log('📅 Période multi-mois:', { startDate, endDate });
+        toast.info(`Génération du rapport du ${format(startDate, 'd MMMM', { locale: fr })} au ${format(endDate, 'd MMMM yyyy', { locale: fr })}`);
+      } catch (error) {
+        console.error('❌ Erreur de parsing des dates:', error);
+        return null;
+      }
+    }
+    // Dates spécifiques même mois
+    else if (datePatterns.specific.test(command)) {
+      const match = command.match(datePatterns.specific);
+      try {
+        const currentYear = new Date().getFullYear();
+        const month = command.match(/(?:janvier|février|mars|avril|mai|juin|juillet|août|septembre|octobre|novembre|décembre)/i)[0];
+        
+        const startDay = parseInt(match[1]);
+        const endDay = parseInt(match[2]);
+        
+        startDate = parse(`${startDay} ${month} ${currentYear}`, 'd MMMM yyyy', new Date(), { locale: fr });
+        endDate = parse(`${endDay} ${month} ${currentYear}`, 'd MMMM yyyy', new Date(), { locale: fr });
+        
+        console.log('📅 Période même mois:', { startDate, endDate });
+        toast.info(`Génération du rapport du ${format(startDate, 'd MMMM', { locale: fr })} au ${format(endDate, 'd MMMM yyyy', { locale: fr })}`);
+      } catch (error) {
+        console.error('❌ Erreur de parsing des dates:', error);
+        return null;
+      }
+    }
+    // Mois spécifique
+    else {
+      const match = command.match(datePatterns.specificMonth);
+      if (match) {
+        try {
+          const month = match[2].toLowerCase();
+          const year = match[3] || new Date().getFullYear().toString();
+          const date = parse(`1 ${month} ${year}`, 'd MMMM yyyy', new Date(), { locale: fr });
+          startDate = startOfMonth(date);
+          endDate = endOfMonth(date);
+          console.log('📅 Période mois spécifique:', { month, year, startDate, endDate });
+          toast.info(`Génération du rapport pour ${format(startDate, 'MMMM yyyy', { locale: fr })}`);
+        } catch (error) {
+          console.error('❌ Erreur de parsing du mois:', error);
+          return null;
+        }
+      }
+    }
+
+    if (startDate && endDate) {
+      return {
+        startDate: format(startDate, 'yyyy-MM-dd'),
+        endDate: format(endDate, 'yyyy-MM-dd')
+      };
+    }
+
+    return null;
+  };
+
   return (
     <div className="rapports-container">
       <div className="rapports-header">
         <h2><FontAwesomeIcon icon={faChartLine} /> HR Reports Generator</h2>
         <p>Generate and export reports for leave management analysis</p>
+        
+        <div className="voice-commands-section">          <div className="voice-commands-header">
+            <button 
+              className={`voice-control-btn ${isListening ? 'listening' : ''}`}
+              onClick={handleVoiceCommand}
+            >
+              <FontAwesomeIcon icon={isListening ? faCircleStop : faMicrophone} />
+              {isListening ? 'Stop Listening' : 'Start Voice Command'}
+            </button>
+          </div>
+          
+          {voiceCommand && (
+            <div className="voice-command-display">
+              {voiceCommand}
+            </div>
+          )}
+  
+        </div>
       </div>
       
       <div className="rapports-filters">
@@ -912,29 +977,14 @@ const Rapports = () => {
                 </>
               )}
               
-              {reportType === 'departments' && (
-                <>
-                  <div className="summary-card">
-                    <h4>Total Departments</h4>
-                    <p>{reportData.summary.totalDepartments}</p>
-                  </div>
-                  <div className="summary-card">
-                    <h4>Highest Leave Usage</h4>
-                    <p>{reportData.summary.highestLeaves}</p>
-                  </div>
-                  <div className="summary-card">
-                    <h4>Lowest Leave Usage</h4>
-                    <p>{reportData.summary.lowestLeaves}</p>
-                  </div>
-                </>
-              )}
+              
             </div>
           </div>
           
           <div className="charts-container">
             {getChartData() && getChartData().barData && (
               <div className="chart-wrapper">
-                <h3>Distribution by Department</h3>
+                <h3>Status Distribution</h3>
                 <div className="chart">
                   <Bar 
                     ref={barChartRef}
@@ -947,7 +997,7 @@ const Rapports = () => {
             
             {getChartData() && getChartData().pieData && (
               <div className="chart-wrapper">
-                <h3>{reportType === 'leaves' ? 'Status Distribution' : 'Department Distribution'}</h3>
+                <h3>Status Distribution</h3>
                 <div className="chart">
                   <Pie 
                     ref={pieChartRef}

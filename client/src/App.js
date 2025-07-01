@@ -12,6 +12,7 @@ import DashboardHr from "./components/dashboard/dashboardHr/DashboardHr";
 import DashboardEmployee from "./components/dashboard/DashboardEmploye/DashboardEmployee";
 import DashboardManager from "./components/dashboard/dashbordManager/DashboardManager";
 import Header from "./components/Header";
+import Calendar from "./components/dashboard/common/Calendar";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import ProtectedRoute from "./components/ProtectedRoute";
 import DemandeConge from "./components/dashboard/DashboardEmploye/DemandeConge";
@@ -66,7 +67,8 @@ const App = () => {  const [isAuthenticated, setIsAuthenticated] = useState(fals
 
   return (
     <GoogleOAuthProvider clientId={clientId}>
-      <Router>        <ToastContainer
+      <Router>
+        <ToastContainer
           position="top-center"
           autoClose={2000}
           hideProgressBar={true}
@@ -78,7 +80,8 @@ const App = () => {  const [isAuthenticated, setIsAuthenticated] = useState(fals
             width: "auto",
             maxWidth: "500px"
           }}
-        /><Routes>
+        />
+        <Routes>
           <Route path="/login" element={isAuthenticated ? <Navigate to={`/dashboard-${userRole === 'rh' ? 'hr' : userRole}`} /> : <Login setAuth={setAuth} />} />
           <Route path="/register" element={<Register setAuth={setAuth} />} />
           <Route path="/landing" element={<Landing />} />
@@ -94,8 +97,12 @@ const App = () => {  const [isAuthenticated, setIsAuthenticated] = useState(fals
               <Route path="/dashboard-employee" element={<DashboardEmployee setAuth={setAuth} />} />
               <Route path="/dashboard-admin" element={<DashboardAdminGeneral setAuth={setAuth} />} />
               
-              {/* Nested Routes for Employee Dashboard */}
+              {/* Routes de calendrier pour chaque rôle */}
+              <Route path="/calendar-hr" element={<Calendar userRole="hr" />} />
+              <Route path="/calendar-manager" element={<Calendar userRole="manager" />} />
+              <Route path="/calendar-employee" element={<Calendar userRole="employee" />} />
 
+              {/* Autres routes */}
               <Route path="/leave-request-history" element={<DemandeConge />} />
               <Route path="/leave-balances" element={<SoldeConges />} />
               <Route path="/profile-employee" element={<ProfileEmloyee />} />
@@ -107,7 +114,7 @@ const App = () => {  const [isAuthenticated, setIsAuthenticated] = useState(fals
             </Route>
           </Route>
 
-          <Route path="/" element={<Navigate to="/login" />} />
+          <Route path="/" element={<Navigate to="/landing" />} />
         </Routes>
       </Router>
     </GoogleOAuthProvider>
