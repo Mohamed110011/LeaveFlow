@@ -65,15 +65,11 @@ services:
   client:
     build: 
       context: ./client
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.prod
     container_name: smartHome_client_prod
     restart: always
     ports:
       - "3000:80"
-    environment:
-      REACT_APP_API_URL: ${REACT_APP_API_URL}
-      REACT_APP_GOOGLE_CLIENT_ID: ${REACT_APP_GOOGLE_CLIENT_ID}
-      REACT_APP_RECAPTCHA_SITE_KEY: ${REACT_APP_RECAPTCHA_SITE_KEY}
     depends_on:
       - server
     networks:

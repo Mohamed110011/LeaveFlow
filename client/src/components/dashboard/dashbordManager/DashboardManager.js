@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import config from '../../../config';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { 
   faCheckCircle,
@@ -30,7 +31,7 @@ const DashboardManager = ({ setAuth }) => {
     setLoading(true);
     try {
       // Récupérer les informations du manager
-      const profileRes = await fetch("http://localhost:5001/dashboard/", {
+      const profileRes = await fetch(`${config.API_URL}/dashboard/`, {
         method: "GET",
         headers: { token: localStorage.token }
       });
@@ -38,7 +39,7 @@ const DashboardManager = ({ setAuth }) => {
       if (!profileRes.ok) throw new Error("Failed to fetch profile data");
       const profileData = await profileRes.json();
       setName(profileData.user_name);      // Récupérer les demandes de congés
-      const demandesRes = await fetch("http://localhost:5001/dashboard/demandes-conge", {
+      const demandesRes = await fetch(`${config.API_URL}/dashboard/demandes-conge`, {
         method: "GET",
         headers: { token: localStorage.token }
       });
@@ -56,7 +57,7 @@ const DashboardManager = ({ setAuth }) => {
       setTeamStats(stats);
 
       // Récupérer les satisfactions des employés
-      const satisfactionRes = await fetch("http://localhost:5001/satisfaction/all", {
+      const satisfactionRes = await fetch(`${config.API_URL}/satisfaction/all`, {
         method: "GET",
         headers: { token: localStorage.token }
       });

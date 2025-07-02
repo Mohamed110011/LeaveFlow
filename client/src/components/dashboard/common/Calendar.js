@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
+import config from '../../../config';
 import './Calendar.css';
 
 // Liste statique des jours fériés
@@ -111,7 +112,7 @@ const Calendar = ({ userRole }) => {
     const fetchEvents = async () => {
       try {
         // Récupérer l'utilisateur connecté
-        const response = await fetch("http://localhost:5001/dashboard/", {
+        const response = await fetch(`${config.API_URL}/dashboard/`, {
           method: "GET",
           headers: { token: localStorage.token }
         });
@@ -120,7 +121,7 @@ const Calendar = ({ userRole }) => {
         const userData = await response.json();
         
         // Récupérer les congés
-        const congeDemandes = await fetch("http://localhost:5001/dashboard/demandes-conge", {
+        const congeDemandes = await fetch(`${config.API_URL}/dashboard/demandes-conge`, {
           method: "GET",
           headers: { token: localStorage.token }
         });

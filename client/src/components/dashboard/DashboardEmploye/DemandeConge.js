@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
+import config from '../../../config';
 import './DemandeConge.css';
 
 // Configuration des toasts
@@ -82,7 +83,7 @@ const DemandeConge = ({ refreshData }) => {
 
   const fetchTypeConges = async () => {
     try {
-      const response = await fetch("http://localhost:5001/dashboard/type-conges", {
+      const response = await fetch(`${config.API_URL}/dashboard/type-conges`, {
         method: "GET",
         headers: { token: localStorage.token }
       });
@@ -101,7 +102,7 @@ const DemandeConge = ({ refreshData }) => {
 
   const fetchDemandesConge = async () => {
     try {
-      const response = await fetch("http://localhost:5001/dashboard/demandes-conge", {
+      const response = await fetch(`${config.API_URL}/dashboard/demandes-conge`, {
         method: "GET",
         headers: { token: localStorage.token }
       });
@@ -190,7 +191,7 @@ const DemandeConge = ({ refreshData }) => {
     try {
       setIsSubmitting(true);
       
-      const response = await fetch("http://localhost:5001/dashboard/demandes-conge", {
+      const response = await fetch(`${config.API_URL}/dashboard/demandes-conge`, {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
@@ -262,7 +263,7 @@ const DemandeConge = ({ refreshData }) => {
     }
     
     try {
-      const response = await fetch(`http://localhost:5001/dashboard/demandes-conge/${id}`, {
+      const response = await fetch(`${config.API_URL}/dashboard/demandes-conge/${id}`, {
         method: "DELETE",
         headers: { token: localStorage.token }
       });

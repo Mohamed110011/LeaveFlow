@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
+import config from '../../../config';
 import './SoldeConges.css';
 
 const SoldeConges = () => {
@@ -17,7 +18,7 @@ const SoldeConges = () => {
       setIsLoading(true);
       setError(null);
 
-      const response = await fetch(`http://localhost:5001/dashboard/soldes?annee=${currentYear}`, {
+      const response = await fetch(`${config.API_URL}/dashboard/soldes?annee=${currentYear}`, {
         method: 'GET',
         headers: { token: localStorage.token }
       });

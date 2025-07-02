@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
+import config from '../../../config';
 import './ProfileEmloyee.css';
 
 const ProfileEmloyee = () => {
@@ -17,7 +18,7 @@ const ProfileEmloyee = () => {
     const fetchUserData = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch('http://localhost:5001/dashboard/', {
+        const response = await fetch(`${config.API_URL}/dashboard/`, {
           method: 'GET',
           headers: { token: localStorage.token }
         });
@@ -63,7 +64,7 @@ const ProfileEmloyee = () => {
     if (!validateForm()) return;
     
     try {
-      const response = await fetch('http://localhost:5001/dashboard/profile', {
+      const response = await fetch(`${config.API_URL}/dashboard/profile`, {
         method: 'PUT',
         headers: { 
           'Content-Type': 'application/json',

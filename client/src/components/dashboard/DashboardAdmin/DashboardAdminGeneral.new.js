@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import config from "../../../config";
 import "./DashboardAdminGeneral.css";
 import ListUsers from "./ListUsers";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -43,7 +44,7 @@ const DashboardAdminGeneral = ({ setAuth }) => {
 
   const getProfile = async () => {
     try {
-      const response = await fetch("http://localhost:5000/dashboard/", {
+      const response = await fetch(`${config.API_URL}/dashboard/`, {
         method: "GET",
         headers: { token: localStorage.token }
       });
@@ -62,7 +63,7 @@ const DashboardAdminGeneral = ({ setAuth }) => {
 
   const getAdminData = async () => {
     try {
-      const usersRes = await fetch("http://localhost:5000/dashboard/users", {
+      const usersRes = await fetch(`${config.API_URL}/dashboard/users`, {
         method: "GET",
         headers: { token: localStorage.token }
       });
@@ -95,7 +96,7 @@ const DashboardAdminGeneral = ({ setAuth }) => {
 
   const getLeaveStats = async () => {
     try {
-      const response = await fetch("http://localhost:5000/dashboard/reports/stats", {
+      const response = await fetch(`${config.API_URL}/dashboard/reports/stats`, {
         method: "GET",
         headers: { token: localStorage.token }
       });

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import config from '../../../config';
 import "./rapports.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { 
@@ -36,7 +37,7 @@ const DashboardHr = ({ setAuth }) => {
   useEffect(() => {
     const checkRole = async () => {
       try {
-        const response = await fetch("http://localhost:5001/dashboard/", {
+        const response = await fetch(`${config.API_URL}/dashboard/`, {
           method: "GET",
           headers: { token: localStorage.token }
         });
@@ -66,7 +67,7 @@ const DashboardHr = ({ setAuth }) => {
       console.log("Current token:", localStorage.token);
       
       // Get current user info and role
-      const roleRes = await fetch("http://localhost:5001/dashboard/", {
+      const roleRes = await fetch(`${config.API_URL}/dashboard/`, {
         method: "GET",
         headers: { token: localStorage.token }
       });
@@ -76,7 +77,7 @@ const DashboardHr = ({ setAuth }) => {
       setName(roleData.user_name);
 
       // Récupérer les utilisateurs
-      const usersRes = await fetch("http://localhost:5001/dashboard/users", {
+      const usersRes = await fetch(`${config.API_URL}/dashboard/users`, {
         method: "GET",
         headers: { token: localStorage.token }
       });
@@ -87,7 +88,7 @@ const DashboardHr = ({ setAuth }) => {
       console.log("Users data:", usersData);
 
       // Récupérer les demandes de congés
-      const leaveReqRes = await fetch("http://localhost:5001/dashboard/demandes-conge", {
+      const leaveReqRes = await fetch(`${config.API_URL}/dashboard/demandes-conge`, {
         method: "GET",
         headers: { token: localStorage.token }
       });      
@@ -105,7 +106,7 @@ const DashboardHr = ({ setAuth }) => {
       });
 
       // Récupérer les types de congés
-      const typesRes = await fetch("http://localhost:5001/dashboard/type-conges", {
+      const typesRes = await fetch(`${config.API_URL}/dashboard/type-conges`, {
         method: "GET",
         headers: { token: localStorage.token }
       });
@@ -116,7 +117,7 @@ const DashboardHr = ({ setAuth }) => {
 
       // Récupérer les soldes de congés
       const currentYear = new Date().getFullYear();
-      const balancesRes = await fetch(`http://localhost:5001/dashboard/solde-conges?year=${currentYear}`, {
+      const balancesRes = await fetch(`${config.API_URL}/dashboard/solde-conges?year=${currentYear}`, {
         method: "GET",
         headers: { token: localStorage.token }
       });
@@ -125,7 +126,7 @@ const DashboardHr = ({ setAuth }) => {
       const balancesData = await balancesRes.json();      setLeaveBalances(balancesData);
 
       // Récupérer les satisfactions des employés
-      const satisfactionRes = await fetch("http://localhost:5001/satisfaction/all", {
+      const satisfactionRes = await fetch(`${config.API_URL}/satisfaction/all`, {
         method: "GET",
         headers: { token: localStorage.token }
       });

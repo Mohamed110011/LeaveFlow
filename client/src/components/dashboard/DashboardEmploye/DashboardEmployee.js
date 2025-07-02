@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import config from '../../../config';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faHourglassHalf,
@@ -43,7 +44,7 @@ const DashboardEmployee = () => {
   const navigate = useNavigate();
   const getSatisfactionScore = async () => {
     try {
-      const response = await fetch("http://localhost:5001/satisfaction/", {
+      const response = await fetch(`${config.API_URL}/satisfaction/`, {
         method: "GET",
         headers: { token: localStorage.token }
       });
@@ -63,7 +64,7 @@ const DashboardEmployee = () => {
   };
   const updateSatisfactionScore = async (newScore, newComment = comment) => {
     try {
-      const response = await fetch("http://localhost:5001/satisfaction/", {
+      const response = await fetch(`${config.API_URL}/satisfaction/`, {
         method: "POST",
         headers: { 
           token: localStorage.token,
@@ -91,7 +92,7 @@ const DashboardEmployee = () => {
     setLoading(true);
     try {
       // Get employee info
-      const profileRes = await fetch("http://localhost:5001/dashboard/", {
+      const profileRes = await fetch(`${config.API_URL}/dashboard/`, {
         method: "GET",
         headers: { token: localStorage.token }
       });
@@ -102,7 +103,7 @@ const DashboardEmployee = () => {
       setUserId(profileData.user_id);
 
       // Get leave requests
-      const demandesRes = await fetch("http://localhost:5001/dashboard/demandes-conge", {
+      const demandesRes = await fetch(`${config.API_URL}/dashboard/demandes-conge`, {
         method: "GET",
         headers: { token: localStorage.token }
       });

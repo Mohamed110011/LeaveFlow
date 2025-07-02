@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
+import config from '../../../config';
 import './GererConges.css';
 
 const GererConges = () => {
@@ -31,7 +32,7 @@ const GererConges = () => {
       // Fetch all leave requests
       console.log("Fetching leave requests...");
 
-      const requestsResponse = await fetch("http://localhost:5001/dashboard/demandes-conge", {
+      const requestsResponse = await fetch(`${config.API_URL}/dashboard/demandes-conge`, {
         method: "GET",
         headers: { token: localStorage.token }
       });
@@ -48,7 +49,7 @@ const GererConges = () => {
 
       // Fetch leave types
       console.log("Fetching leave types...");
-      const typesResponse = await fetch("http://localhost:5001/dashboard/type-conges", {
+      const typesResponse = await fetch(`${config.API_URL}/dashboard/type-conges`, {
         method: "GET",
         headers: { token: localStorage.token }
       });
@@ -63,7 +64,7 @@ const GererConges = () => {
 
       // Fetch users
       console.log("Fetching users...");
-      const usersResponse = await fetch("http://localhost:5001/dashboard/users", {
+      const usersResponse = await fetch(`${config.API_URL}/dashboard/users`, {
         method: "GET",
         headers: { token: localStorage.token }
       });
@@ -134,7 +135,7 @@ const GererConges = () => {
       console.log('Sending approval request for ID:', requestId);
 
       const response = await fetch(
-        `http://localhost:5001/dashboard/demandes-conge/${requestId}`,
+        `${config.API_URL}/dashboard/demandes-conge/${requestId}`,
         {
           method: 'PUT',
           headers: {
@@ -187,7 +188,7 @@ const GererConges = () => {
       console.log('Sending rejection request for ID:', selectedRequestId);
 
       const response = await fetch(
-        `http://localhost:5001/dashboard/demandes-conge/${selectedRequestId}`,
+        `${config.API_URL}/dashboard/demandes-conge/${selectedRequestId}`,
         {
           method: 'PUT',
           headers: {

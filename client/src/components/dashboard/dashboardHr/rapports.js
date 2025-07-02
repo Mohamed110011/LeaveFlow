@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import config from '../../../config';
 import { 
   faFilePdf, 
   faFileExcel, 
@@ -81,7 +82,7 @@ const Rapports = () => {  // State for filters
     const fetchData = async () => {
       setLoading(true);      try {
         // Fetch employees
-        const employeesRes = await fetch('http://localhost:5001/dashboard/users', {
+        const employeesRes = await fetch(`${config.API_URL}/dashboard/users`, {
           method: 'GET',
           headers: { token: localStorage.token }
         });
@@ -132,7 +133,7 @@ const Rapports = () => {  // State for filters
       });
       
       // Fetch report data
-      const res = await fetch(`http://localhost:5001/dashboard/reports?${params.toString()}`, {
+      const res = await fetch(`${config.API_URL}/dashboard/reports?${params.toString()}`, {
         method: 'GET',
         headers: { token: localStorage.token }
       });
