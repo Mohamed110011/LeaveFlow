@@ -43,6 +43,7 @@ services:
       PG_DATABASE: ${POSTGRES_DB}
       JWT_SECRET: ${JWT_SECRET}
       RECAPTCHA_SECRET_KEY: ${RECAPTCHA_SECRET_KEY}
+      RECAPTCHA_SITE_KEY: ${RECAPTCHA_SITE_KEY}
       EMAIL_USER: ${EMAIL_USER}
       EMAIL_PASSWORD: ${EMAIL_PASSWORD}
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
@@ -70,6 +71,10 @@ services:
     restart: always
     ports:
       - "3000:80"
+    environment:
+      REACT_APP_API_URL: ${REACT_APP_API_URL:-http://leaveflow.ddns.net:5001}
+      REACT_APP_GOOGLE_CLIENT_ID: ${REACT_APP_GOOGLE_CLIENT_ID}
+      REACT_APP_RECAPTCHA_SITE_KEY: ${REACT_APP_RECAPTCHA_SITE_KEY}
     depends_on:
       - server
     networks:

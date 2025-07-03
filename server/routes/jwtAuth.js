@@ -19,9 +19,15 @@ router.post("/register", validInfo, async (req, res) => {
     const { name, email, password, role, captchaToken } = req.body;
 
     // Verify reCAPTCHA token
-    const recaptchaVerified = await verifyRecaptcha(captchaToken);
-    if (!recaptchaVerified) {
-      return res.status(401).json("Invalid reCAPTCHA. Please try again.");
+    try {
+      const recaptchaVerified = await verifyRecaptcha(captchaToken);
+      if (!recaptchaVerified) {
+        console.error("reCAPTCHA verification failed for registration");
+        return res.status(401).json("Invalid reCAPTCHA. Please try again.");
+      }
+    } catch (recaptchaError) {
+      console.error("reCAPTCHA verification error:", recaptchaError.message);
+      return res.status(500).json("reCAPTCHA verification service unavailable. Please try again later.");
     }
 
     // Check if user exists
