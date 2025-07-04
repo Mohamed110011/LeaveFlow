@@ -26,7 +26,7 @@ function Header({ setAuth, userRole }) {
   return (
     <div className="app-container">
       <div className="sidebar-wrapper">
-        <Sidebar userRole={userRole} />
+        <Sidebar currentUserRole={userRole} />
       </div>
       <div className="app-content">
         <header className="app-header">
